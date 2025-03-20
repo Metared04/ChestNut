@@ -21,6 +21,8 @@ export default function HomeScreen() {
       >
         <Text>Bienvenue dans mon app React Native !</Text>
         <Button onPress={() => console.log("Oui.")} title="lets go !"/>
+        <Button onPress={() => console.log("Oui.")} title="Ajouter un foyer"/>
+        <Button onPress={() => console.log("Oui.")} title="Ajouter un frigo / congelateur"/>
         <TextInput placeholder="Oui" editable textAlign="center"/>
     </View>
   );
