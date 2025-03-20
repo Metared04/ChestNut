@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 # ChestNut
 Projet d'application Chest'Nut
-=======
-=======
->>>>>>> 255eb36cfd490f69937ee12972c1cec2b0d26f66
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
@@ -55,7 +51,4 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-<<<<<<< HEAD
->>>>>>> 5bab601 (Ajout des fichiers requis au projet)
-=======
->>>>>>> 255eb36cfd490f69937ee12972c1cec2b0d26f66
+
