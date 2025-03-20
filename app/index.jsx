@@ -19,7 +19,7 @@ export default function HomeScreen() {
       justifyContent: 'center', 
       alignItems: 'center' }}
       >
-        <Text>Bienvenue dans mon app React Native !</Text>
+        <Text>Bienvenue dans Chest'Nut !</Text>
         <Button onPress={() => console.log("Oui.")} title="lets go !"/>
         <Button onPress={() => console.log("Non.")} title="Ajouter un foyer"/>
         <Button onPress={() => console.log("Ca depend.")} title="Ajouter un frigo / congelateur"/>
