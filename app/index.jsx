@@ -19,9 +19,12 @@ export default function HomeScreen() {
       justifyContent: 'center', 
       alignItems: 'center' }}
       >
-        <Text>Bienvenue dans mon app React Native !</Text>
-        <Button onPress={() => console.log("Oui.")} title="lets go !"/>
-        <TextInput placeholder="Oui" editable textAlign="center"/>
+        <Text>Bienvenue</Text>
+        <Text>Inserer le prenom de l'utilisateur ici</Text>
+        <Button onPress={() => console.log("Je veux voir les parametres.")} title="Options"/>
+        <Button onPress={() => console.log("Je veux ajouter un foyer")} title="Ajouter un foyer"/>
+        <Button onPress={() => console.log("Ca depend.")} title="Ajouter un frigo / congelateur"/>
+                
     </View>
   );
 }
