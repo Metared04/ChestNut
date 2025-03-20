@@ -17,7 +17,8 @@ export default function HomeScreen() {
     <View style={{ 
       flex: 1, 
       justifyContent: 'center', 
-      alignItems: 'center' }}
+      alignItems: 'center',
+      borderColor: 'pink' }}
       >
         <Text>Bienvenue</Text>
         <Text>Inserer le prenom de l'utilisateur ici</Text>
