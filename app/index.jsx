@@ -1,17 +1,6 @@
 import { View, Text, Alert, Button, TextInput } from "react-native";
 import React from 'react';
 
-//------------------- data :
-
-class User
-{
-	constructor( userName = "Unknown", userEmail="Aucun")
-	{
-		this.userName = userName;
-		this.userEmail = userEmail;
-	}
-}
-
 export default function HomeScreen() {
   return (
     <View style={{ 
