@@ -48,6 +48,31 @@ class Food
 		return this.getNumberOfValidityDays() <= 0;
 	}
 	
+	getExpirationStatus(){
+		if (this.foodIsExpired()) {
+            // console.log("Le produit ", this.foodName, " est PÉRIMÉ");
+			return 0;
+        } else if (this.foodIsAlmostExpired()) {
+            // console.log("Le produit ", this.foodName, " expire bientôt !", this.getNumberOfValidityDays(), "jours restants)");
+			return 1;
+        } else {
+            // console.log("Le produit ", this.foodName, " est encore bon pour", this.getNumberOfValidityDays(), "jours.");
+			return 2;
+        }
+	}
+	
+	checkExpirationStatus() {
+        if (this.getExpirationStatus() == 0){
+			return "Le produit " + this.foodName + " est PÉRIMÉ";
+		} else if (this.getExpirationStatus() == 1){
+			return "Le produit " + this.foodName + " expire bientôt ! " + this.getNumberOfValidityDays() + " jours restants";
+		} else if (this.getExpirationStatus() == 2){
+			return "Le produit " + this.foodName + " est encore bon pour " + Math.round(this.getNumberOfValidityDays()) + " jours.";
+		} else {
+			return "Probleme de reconnaissance du produit";
+		}
+    }
+	
 }
 
 export default Food
