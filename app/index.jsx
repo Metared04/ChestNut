@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, ScrollView, Animated } from "react-native";
+import { View, Text, TouchableOpacity, Animated } from "react-native";
 import React, { useState, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
-import styled from 'styled-components/native';
+import styled from "styled-components/native";
 
 const items = [
   { id: 1, name: "Bolognese", daysLeft: 1, icon: "🍝" },
@@ -47,7 +47,7 @@ const ItemContainer = styled.View`
 
 const ItemBox = styled.TouchableOpacity`
   width: 48%;
-  height: 80px;
+  height: 100px;
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
@@ -68,11 +68,11 @@ const ItemName = styled.Text`
 `;
 
 const ToggleContainer = styled.View`
-  width: 120px;
-  height: 48px;
+  width: 48px;
+  height: 120px;
   background-color: #e5e7eb;
   border-radius: 24px;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   margin-top: 32px;
@@ -81,19 +81,19 @@ const ToggleContainer = styled.View`
 `;
 
 const ToggleButton = styled(Animated.View)`
-  width: ${({ isFridge }) => (isFridge ? '50%' : '50%')};
-  height: 40px;
+  width: 40px;
+  height: 50%;
   background-color: white;
   border-radius: 20px;
   position: absolute;
-  top: 4px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ToggleText = styled.Text`
   font-size: 16px;
   font-weight: bold;
   color: ${({ active }) => (active ? '#6b46c1' : '#6b7280')};
-  width: 50%;
   text-align: center;
 `;
 
@@ -104,12 +104,17 @@ export default function App() {
 
   const toggleFridgeFreezer = () => {
     Animated.timing(slideAnim, {
-      toValue: isFridge ? 60 : 0,
+      toValue: isFridge ? 1 : 0, // 1 = Freezer (en bas), 0 = Fridge (en haut)
       duration: 300,
       useNativeDriver: false,
     }).start();
     setIsFridge(!isFridge);
   };
+
+  const animatedTop = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [4, 60], // Position du slide en haut et en bas
+  });
 
   return (
     <Container>
@@ -129,12 +134,10 @@ export default function App() {
 
       {/* Toggle Fridge/Freezer */}
       <ToggleContainer>
-        <ToggleButton style={{ left: slideAnim }} />
-        <TouchableOpacity onPress={toggleFridgeFreezer} style={{ width: '100%', alignItems: 'center' }}>
-          <ToggleText active={isFridge}>Fridge</ToggleText>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={toggleFridgeFreezer} style={{ width: '100%', alignItems: 'center' }}>
-          <ToggleText active={!isFridge}>Freezer</ToggleText>
+        <TouchableOpacity onPress={toggleFridgeFreezer} style={{ flex: 1, width: "100%" }}>
+          <ToggleButton style={{ top: animatedTop }}>
+            <ToggleText active={isFridge}>{isFridge ? "Fridge" : "Freezer"}</ToggleText>
+          </ToggleButton>
         </TouchableOpacity>
       </ToggleContainer>
     </Container>
