@@ -1,0 +1,761 @@
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 816d244..cd4feb8 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -1,6 +1,3 @@[m
+[31m-# ChestNut[m
+[31m-Projet d'application Chest'Nut[m
+[31m-[m
+ # Welcome to your Expo app 👋[m
+ [m
+ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).[m
+[36m@@ -51,4 +48,3 @@[m [mJoin our community of developers creating universal apps.[m
+ [m
+ - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.[m
+ - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.[m
+[31m-[m
+[1mdiff --git a/app.json b/app.json[m
+[1mindex bad8be2..6f0a33b 100644[m
+[1m--- a/app.json[m
+[1m+++ b/app.json[m
+[36m@@ -1,7 +1,7 @@[m
+ {[m
+   "expo": {[m
+[31m-    "name": "ChestNut",[m
+[31m-    "slug": "ChestNut",[m
+[32m+[m[32m    "name": "chest_nut",[m
+[32m+[m[32m    "slug": "chest_nut",[m
+     "version": "1.0.0",[m
+     "orientation": "portrait",[m
+     "icon": "./assets/images/icon.png",[m
+[1mdiff --git a/app/_layout.jsx b/app/_layout.jsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d2a8b0b[m
+[1m--- /dev/null[m
+[1m+++ b/app/_layout.jsx[m
+[36m@@ -0,0 +1,5 @@[m
+[32m+[m[32mimport { Stack } from "expo-router";[m
+[32m+[m
+[32m+[m[32mexport default function RootLayout() {[m
+[32m+[m[32m  return <Stack />;[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/index.jsx b/app/index.jsx[m
+[1mindex 1145658..d0bfec7 100644[m
+[1m--- a/app/index.jsx[m
+[1m+++ b/app/index.jsx[m
+[36m@@ -1,20 +1,157 @@[m
+[31m-import { View, Text, Alert, Button, TextInput } from "react-native";[m
+[31m-import React from 'react';[m
+[32m+[m[32mimport { Text, View, TextInput, Button, FlatList } from "react-native";[m
+[32m+[m[32mimport React, { useState } from 'react';[m
+[32m+[m[32mimport { useEffect } from 'react';[m
+[32m+[m[32mimport { supabase } from './supabase';[m
+[32m+[m[32mimport styled from "styled-components/native";[m
+[32m+[m[32mimport Inventory from './models/Inventory';[m
+[32m+[m[32mimport Food from './models/Food';[m
+[32m+[m
+[32m+[m[32mlet a = new Food("Petit Beurre Pocket", "Belle France", "2025-04-01", null, "2025-10-01", "3258561020686", 1, true);[m
+[32m+[m[32mlet b = new Food("Yop de wish", "Pâturage", "2025-04-17", null, "2025-04-19", "3250391693009", 1, true);[m
+[32m+[m[32mlet c = new Food("Filet mignon", "", "2025-04-18", null, "2025-04-22", "", 2, false);[m
+[32m+[m
+[32m+[m[32mconst i = new Inventory(3, [a,b,c]);[m
+[32m+[m
+[32m+[m[32mexport default function Index() {[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    const fetchData = async () => {[m
+[32m+[m[32m      const { data, error } = await supabase.from('fridge_table').select('*');[m
+[32m+[m[32m      if (error) console.error(error);[m
+[32m+[m[32m      else console.log(data);[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    fetchData();[m
+[32m+[m[32m  }, []);[m
+[32m+[m
+[32m+[m[32m  // Style[m
+[32m+[m
+[32m+[m[32m  const [selected, setSelected] = useState(1);[m
+[32m+[m
+[32m+[m[32m  //[m
+[32m+[m
+[32m+[m[32m  const [foodList, setFoodList] = useState([]);[m
+[32m+[m
+[32m+[m[32m  const [newFood, setNewFood] = useState("");[m
+[32m+[m
+[32m+[m[32m  const [userNameFood, setUserNameFood] = useState('');[m
+[32m+[m
+[32m+[m[32m  const fetchFoods = async () => {[m
+[32m+[m[32m    const {data, error} = await supabase.from('fridge_table').select("*");[m
+[32m+[m[32m    if(error){[m
+[32m+[m[32m      console.log("Probleme de fetch : ", error);[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m      setFoodList(data);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    fetchFoods();[m
+[32m+[m[32m  }, []);[m
+[32m+[m
+[32m+[m[32m  const addFood = async () => {[m
+[32m+[m[32m    const newFoodData = {[m
+[32m+[m[32m      food_name: userNameFood,[m
+[32m+[m[32m      isOpened: false,[m
+[32m+[m[32m    };[m
+[32m+[m[32m    const {data, error} = await supabase[m
+[32m+[m[32m    .from("fridge_table")[m
+[32m+[m[32m    .insert([newFoodData])[m
+[32m+[m[32m    .select()[m[41m [m
+[32m+[m[32m    .single();[m
+[32m+[m
+[32m+[m[32m    if(error){[m
+[32m+[m[32m      console.log("Probleme d'ajout : ", error);[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m      setFoodList((prev) => [...prev, data]);[m
+[32m+[m[32m      setNewFood("");[m
+[32m+[m[32m    }[m
+[32m+[m[32m  };[m
+ [m
+[31m-export default function HomeScreen() {[m
+   return ([m
+[31m-    <View style={{ [m
+[31m-      flex: 1, [m
+[31m-      justifyContent: 'center', [m
+[31m-      alignItems: 'center',[m
+[31m-      borderColor: 'pink' }}[m
+[31m-      >[m
+[31m-        <Text>Bienvenue</Text>[m
+[31m-        <Text>Inserer le prenom de l'utilisateur ici</Text>[m
+[31m-        <Button onPress={() => console.log("Je veux voir les parametres.")} title="Options"/>[m
+[31m-        <Button onPress={() => console.log("Je veux ajouter un foyer")} title="Ajouter un foyer"/>[m
+[31m-        <Button onPress={() => console.log("Ca depend.")} title="Ajouter un frigo / congelateur"/>[m
+[31m-                [m
+[32m+[m[32m    <View[m
+[32m+[m[32m      style={{[m
+[32m+[m[32m        flex: 1,[m
+[32m+[m[32m        justifyContent: "center",[m
+[32m+[m[32m        alignItems: "center",[m
+[32m+[m[32m      }}[m
+[32m+[m[32m    >[m
+[32m+[m[32m       <Text>Supabase setup done!</Text>[m
+[32m+[m[32m       <TextInput[m[41m [m
+[32m+[m[32m       style={{[m
+[32m+[m[32m        borderColor: 'gray',[m
+[32m+[m[32m        borderWidth: 1[m
+[32m+[m[32m       }}[m
+[32m+[m[32m       placeholder="Votre aliment..."[m[41m [m
+[32m+[m[32m       value={userNameFood}[m[41m [m
+[32m+[m[32m       onChangeText={setUserNameFood}[m[41m [m
+[32m+[m[32m       />[m
+[32m+[m[32m       <Button title="Ajoutez !" onPress={addFood}></Button>[m
+[32m+[m[32m       <ItemContainer>[m
+[32m+[m[32m        {foodList.map((food, index) => ([m
+[32m+[m[32m          <ItemBox key={index} selected={food.id === selected} onPress={() => setSelected(food.id)}>[m
+[32m+[m[32m            <ItemIcon>{food.id}</ItemIcon>[m
+[32m+[m[32m            <ItemName >{food.food_name}</ItemName>[m
+[32m+[m[32m          </ItemBox>[m
+[32m+[m[32m        ))}[m
+[32m+[m[32m       </ItemContainer>[m
+     </View>[m
+   );[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32m/*[m
+[32m+[m[32m<ItemContainer>[m
+[32m+[m[32m  {items.map((item) => ([m
+[32m+[m[32m    <ItemBox key={item.id} selected={item.id === selected} onPress={() => setSelected(item.id)}>[m
+[32m+[m[32m      <ItemIcon>{item.icon}</ItemIcon>[m
+[32m+[m[32m      <ItemName selected={item.id === selected}>{item.name}</ItemName>[m
+[32m+[m[32m    </ItemBox>[m
+[32m+[m[32m  ))}[m
+[32m+[m[32m</ItemContainer>[m
+[32m+[m
+[32m+[m[32m<FlatList[m[41m [m
+[32m+[m[32m  data={foodList}[m
+[32m+[m[32m  keyExtractor={(item, index) => index.toString()}[m
+[32m+[m[32m  renderItem={({ item }) => ([m
+[32m+[m[32m  <Text style={{ fontSize: 18, padding: 5 }}>• {item}</Text>[m
+[32m+[m[32m  )}[m
+[32m+[m[32m/>[m
+[32m+[m[32m*/[m
+[32m+[m
+[32m+[m[32m// Style[m
+[32m+[m[32mconst ItemContainer = styled.View`[m
+[32m+[m[32m  flex-direction: row;[m
+[32m+[m[32m  flex-wrap: wrap;[m
+[32m+[m[32m  justify-content: space-between;[m
+[32m+[m[32m  width: 90%;[m
+[32m+[m[32m  margin-top: 16px;[m
+[32m+[m[32m`;[m
+[32m+[m
+[32m+[m[32mconst ItemBox = styled.TouchableOpacity`[m
+[32m+[m[32m  width: 48%;[m
+[32m+[m[32m  height: 100px;[m
+[32m+[m[32m  border-radius: 16px;[m
+[32m+[m[32m  padding: 16px;[m
+[32m+[m[32m  margin-bottom: 16px;[m
+[32m+[m[32m  background-color: ${({ selected }) => (selected ? '#6b46c1' : '#e5e7eb')};[m
+[32m+[m[32m  flex-direction: row;[m
+[32m+[m[32m  align-items: center;[m
+[32m+[m[32m`;[m
+[32m+[m
+[32m+[m[32mconst ItemIcon = styled.Text`[m
+[32m+[m[32m  font-size: 24px;[m
+[32m+[m[32m  margin-right: 10px;[m
+[32m+[m[32m`;[m
+[32m+[m
+[32m+[m[32mconst ItemName = styled.Text`[m
+[32m+[m[32m  font-size: 18px;[m
+[32m+[m[32m  font-weight: bold;[m
+[32m+[m[32m  color: ${({ selected }) => (selected ? 'white' : '#6b7280')};[m
+[32m+[m[32m`;[m
+[32m+[m
+[32m+[m[32mconst ToggleText = styled.Text`[m
+[32m+[m[32m  font-size: 16px;[m
+[32m+[m[32m  font-weight: bold;[m
+[32m+[m[32m  color: ${({ active }) => (active ? '#6b46c1' : '#6b7280')};[m
+[32m+[m[32m  text-align: center;[m
+[32m+[m[32m`;[m
+\ No newline at end of file[m
+[1mdiff --git a/classes/Food.jsx b/app/models/Food.js[m
+[1msimilarity index 100%[m
+[1mrename from classes/Food.jsx[m
+[1mrename to app/models/Food.js[m
+[1mdiff --git a/classes/Inventory.jsx b/app/models/Inventory.js[m
+[1msimilarity index 100%[m
+[1mrename from classes/Inventory.jsx[m
+[1mrename to app/models/Inventory.js[m
+[1mdiff --git a/app/supabase.js b/app/supabase.js[m
+[1mnew file mode 100644[m
+[1mindex 0000000..85d3ec2[m
+[1m--- /dev/null[m
+[1m+++ b/app/supabase.js[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32mimport { createClient } from '@supabase/supabase-js';[m
+[32m+[m
+[32m+[m[32mconst SUPABASE_URL = 'https://joboivbydwrjkvhiyywb.supabase.co';[m
+[32m+[m[32mconst SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvYm9pdmJ5ZHdyamt2aGl5eXdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM1ODAyNDUsImV4cCI6MjA1OTE1NjI0NX0.7uIIR-p4VyErr1NoT7ziM3tVHaur8_xwF3We9QKix1Q';[m
+[32m+[m
+[32m+[m[32mexport const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);[m
+\ No newline at end of file[m
+[1mdiff --git a/assets/images/Chest_Nut.png b/assets/images/Chest_Nut.png[m
+[1mdeleted file mode 100644[m
+[1mindex b49978f..0000000[m
+Binary files a/assets/images/Chest_Nut.png and /dev/null differ
+[1mdiff --git a/components/Collapsible.tsx b/components/Collapsible.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 55bff2f..0000000[m
+[1m--- a/components/Collapsible.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,45 +0,0 @@[m
+[31m-import { PropsWithChildren, useState } from 'react';[m
+[31m-import { StyleSheet, TouchableOpacity } from 'react-native';[m
+[31m-[m
+[31m-import { ThemedText } from '@/components/ThemedText';[m
+[31m-import { ThemedView } from '@/components/ThemedView';[m
+[31m-import { IconSymbol } from '@/components/ui/IconSymbol';[m
+[31m-import { Colors } from '@/constants/Colors';[m
+[31m-import { useColorScheme } from '@/hooks/useColorScheme';[m
+[31m-[m
+[31m-export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {[m
+[31m-  const [isOpen, setIsOpen] = useState(false);[m
+[31m-  const theme = useColorScheme() ?? 'light';[m
+[31m-[m
+[31m-  return ([m
+[31m-    <ThemedView>[m
+[31m-      <TouchableOpacity[m
+[31m-        style={styles.heading}[m
+[31m-        onPress={() => setIsOpen((value) => !value)}[m
+[31m-        activeOpacity={0.8}>[m
+[31m-        <IconSymbol[m
+[31m-          name="chevron.right"[m
+[31m-          size={18}[m
+[31m-          weight="medium"[m
+[31m-          color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}[m
+[31m-          style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}[m
+[31m-        />[m
+[31m-[m
+[31m-        <ThemedText type="defaultSemiBold">{title}</ThemedText>[m
+[31m-      </TouchableOpacity>[m
+[31m-      {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}[m
+[31m-    </ThemedView>[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-const styles = StyleSheet.create({[m
+[31m-  heading: {[m
+[31m-    flexDirection: 'row',[m
+[31m-    alignItems: 'center',[m
+[31m-    gap: 6,[m
+[31m-  },[m
+[31m-  content: {[m
+[31m-    marginTop: 6,[m
+[31m-    marginLeft: 24,[m
+[31m-  },[m
+[31m-});[m
+[1mdiff --git a/components/ExternalLink.tsx b/components/ExternalLink.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 8f05675..0000000[m
+[1m--- a/components/ExternalLink.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,24 +0,0 @@[m
+[31m-import { Link } from 'expo-router';[m
+[31m-import { openBrowserAsync } from 'expo-web-browser';[m
+[31m-import { type ComponentProps } from 'react';[m
+[31m-import { Platform } from 'react-native';[m
+[31m-[m
+[31m-type Props = Omit<ComponentProps<typeof Link>, 'href'> & { href: string };[m
+[31m-[m
+[31m-export function ExternalLink({ href, ...rest }: Props) {[m
+[31m-  return ([m
+[31m-    <Link[m
+[31m-      target="_blank"[m
+[31m-      {...rest}[m
+[31m-      href={href}[m
+[31m-      onPress={async (event) => {[m
+[31m-        if (Platform.OS !== 'web') {[m
+[31m-          // Prevent the default behavior of linking to the default browser on native.[m
+[31m-          event.preventDefault();[m
+[31m-          // Open the link in an in-app browser.[m
+[31m-          await openBrowserAsync(href);[m
+[31m-        }[m
+[31m-      }}[m
+[31m-    />[m
+[31m-  );[m
+[31m-}[m
+[1mdiff --git a/components/HapticTab.tsx b/components/HapticTab.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 7f3981c..0000000[m
+[1m--- a/components/HapticTab.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,18 +0,0 @@[m
+[31m-import { BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';[m
+[31m-import { PlatformPressable } from '@react-navigation/elements';[m
+[31m-import * as Haptics from 'expo-haptics';[m
+[31m-[m
+[31m-export function HapticTab(props: BottomTabBarButtonProps) {[m
+[31m-  return ([m
+[31m-    <PlatformPressable[m
+[31m-      {...props}[m
+[31m-      onPressIn={(ev) => {[m
+[31m-        if (process.env.EXPO_OS === 'ios') {[m
+[31m-          // Add a soft haptic feedback when pressing down on the tabs.[m
+[31m-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);[m
+[31m-        }[m
+[31m-        props.onPressIn?.(ev);[m
+[31m-      }}[m
+[31m-    />[m
+[31m-  );[m
+[31m-}[m
+[1mdiff --git a/components/HelloWave.tsx b/components/HelloWave.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 9b4bc31..0000000[m
+[1m--- a/components/HelloWave.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,40 +0,0 @@[m
+[31m-import { useEffect } from 'react';[m
+[31m-import { StyleSheet } from 'react-native';[m
+[31m-import Animated, {[m
+[31m-  useSharedValue,[m
+[31m-  useAnimatedStyle,[m
+[31m-  withTiming,[m
+[31m-  withRepeat,[m
+[31m-  withSequence,[m
+[31m-} from 'react-native-reanimated';[m
+[31m-[m
+[31m-import { ThemedText } from '@/components/ThemedText';[m
+[31m-[m
+[31m-export function HelloWave() {[m
+[31m-  const rotationAnimation = useSharedValue(0);[m
+[31m-[m
+[31m-  useEffect(() => {[m
+[31m-    rotationAnimation.value = withRepeat([m
+[31m-      withSequence(withTiming(25, { duration: 150 }), withTiming(0, { duration: 150 })),[m
+[31m-      4 // Run the animation 4 times[m
+[31m-    );[m
+[31m-  }, []);[m
+[31m-[m
+[31m-  const animatedStyle = useAnimatedStyle(() => ({[m
+[31m-    transform: [{ rotate: `${rotationAnimation.value}deg` }],[m
+[31m-  }));[m
+[31m-[m
+[31m-  return ([m
+[31m-    <Animated.View style={animatedStyle}>[m
+[31m-      <ThemedText style={styles.text}>👋</ThemedText>[m
+[31m-    </Animated.View>[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-const styles = StyleSheet.create({[m
+[31m-  text: {[m
+[31m-    fontSize: 28,[m
+[31m-    lineHeight: 32,[m
+[31m-    marginTop: -6,[m
+[31m-  },[m
+[31m-});[m
+[1mdiff --git a/components/ParallaxScrollView.tsx b/components/ParallaxScrollView.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 5df1d75..0000000[m
+[1m--- a/components/ParallaxScrollView.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,82 +0,0 @@[m
+[31m-import type { PropsWithChildren, ReactElement } from 'react';[m
+[31m-import { StyleSheet } from 'react-native';[m
+[31m-import Animated, {[m
+[31m-  interpolate,[m
+[31m-  useAnimatedRef,[m
+[31m-  useAnimatedStyle,[m
+[31m-  useScrollViewOffset,[m
+[31m-} from 'react-native-reanimated';[m
+[31m-[m
+[31m-import { ThemedView } from '@/components/ThemedView';[m
+[31m-import { useBottomTabOverflow } from '@/components/ui/TabBarBackground';[m
+[31m-import { useColorScheme } from '@/hooks/useColorScheme';[m
+[31m-[m
+[31m-const HEADER_HEIGHT = 250;[m
+[31m-[m
+[31m-type Props = PropsWithChildren<{[m
+[31m-  headerImage: ReactElement;[m
+[31m-  headerBackgroundColor: { dark: string; light: string };[m
+[31m-}>;[m
+[31m-[m
+[31m-export default function ParallaxScrollView({[m
+[31m-  children,[m
+[31m-  headerImage,[m
+[31m-  headerBackgroundColor,[m
+[31m-}: Props) {[m
+[31m-  const colorScheme = useColorScheme() ?? 'light';[m
+[31m-  const scrollRef = useAnimatedRef<Animated.ScrollView>();[m
+[31m-  const scrollOffset = useScrollViewOffset(scrollRef);[m
+[31m-  const bottom = useBottomTabOverflow();[m
+[31m-  const headerAnimatedStyle = useAnimatedStyle(() => {[m
+[31m-    return {[m
+[31m-      transform: [[m
+[31m-        {[m
+[31m-          translateY: interpolate([m
+[31m-            scrollOffset.value,[m
+[31m-            [-HEADER_HEIGHT, 0, HEADER_HEIGHT],[m
+[31m-            [-HEADER_HEIGHT / 2, 0, HEADER_HEIGHT * 0.75][m
+[31m-          ),[m
+[31m-        },[m
+[31m-        {[m
+[31m-          scale: interpolate(scrollOffset.value, [-HEADER_HEIGHT, 0, HEADER_HEIGHT], [2, 1, 1]),[m
+[31m-        },[m
+[31m-      ],[m
+[31m-    };[m
+[31m-  });[m
+[31m-[m
+[31m-  return ([m
+[31m-    <ThemedView style={styles.container}>[m
+[31m-      <Animated.ScrollView[m
+[31m-        ref={scrollRef}[m
+[31m-        scrollEventThrottle={16}[m
+[31m-        scrollIndicatorInsets={{ bottom }}[m
+[31m-        contentContainerStyle={{ paddingBottom: bottom }}>[m
+[31m-        <Animated.View[m
+[31m-          style={[[m
+[31m-            styles.header,[m
+[31m-            { backgroundColor: headerBackgroundColor[colorScheme] },[m
+[31m-            headerAnimatedStyle,[m
+[31m-          ]}>[m
+[31m-          {headerImage}[m
+[31m-        </Animated.View>[m
+[31m-        <ThemedView style={styles.content}>{children}</ThemedView>[m
+[31m-      </Animated.ScrollView>[m
+[31m-    </ThemedView>[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-const styles = StyleSheet.create({[m
+[31m-  container: {[m
+[31m-    flex: 1,[m
+[31m-  },[m
+[31m-  header: {[m
+[31m-    height: HEADER_HEIGHT,[m
+[31m-    overflow: 'hidden',[m
+[31m-  },[m
+[31m-  content: {[m
+[31m-    flex: 1,[m
+[31m-    padding: 32,[m
+[31m-    gap: 16,[m
+[31m-    overflow: 'hidden',[m
+[31m-  },[m
+[31m-});[m
+[1mdiff --git a/components/ThemedText.tsx b/components/ThemedText.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex c0e1a78..0000000[m
+[1m--- a/components/ThemedText.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,60 +0,0 @@[m
+[31m-import { Text, type TextProps, StyleSheet } from 'react-native';[m
+[31m-[m
+[31m-import { useThemeColor } from '@/hooks/useThemeColor';[m
+[31m-[m
+[31m-export type ThemedTextProps = TextProps & {[m
+[31m-  lightColor?: string;[m
+[31m-  darkColor?: string;[m
+[31m-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';[m
+[31m-};[m
+[31m-[m
+[31m-export function ThemedText({[m
+[31m-  style,[m
+[31m-  lightColor,[m
+[31m-  darkColor,[m
+[31m-  type = 'default',[m
+[31m-  ...rest[m
+[31m-}: ThemedTextProps) {[m
+[31m-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');[m
+[31m-[m
+[31m-  return ([m
+[31m-    <Text[m
+[31m-      style={[[m
+[31m-        { color },[m
+[31m-        type === 'default' ? styles.default : undefined,[m
+[31m-        type === 'title' ? styles.title : undefined,[m
+[31m-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,[m
+[31m-        type === 'subtitle' ? styles.subtitle : undefined,[m
+[31m-        type === 'link' ? styles.link : undefined,[m
+[31m-        style,[m
+[31m-      ]}[m
+[31m-      {...rest}[m
+[31m-    />[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-const styles = StyleSheet.create({[m
+[31m-  default: {[m
+[31m-    fontSize: 16,[m
+[31m-    lineHeight: 24,[m
+[31m-  },[m
+[31m-  defaultSemiBold: {[m
+[31m-    fontSize: 16,[m
+[31m-    lineHeight: 24,[m
+[31m-    fontWeight: '600',[m
+[31m-  },[m
+[31m-  title: {[m
+[31m-    fontSize: 32,[m
+[31m-    fontWeight: 'bold',[m
+[31m-    lineHeight: 32,[m
+[31m-  },[m
+[31m-  subtitle: {[m
+[31m-    fontSize: 20,[m
+[31m-    fontWeight: 'bold',[m
+[31m-  },[m
+[31m-  link: {[m
+[31m-    lineHeight: 30,[m
+[31m-    fontSize: 16,[m
+[31m-    color: '#0a7ea4',[m
+[31m-  },[m
+[31m-});[m
+[1mdiff --git a/components/ThemedView.tsx b/components/ThemedView.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 4d2cb09..0000000[m
+[1m--- a/components/ThemedView.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,14 +0,0 @@[m
+[31m-import { View, type ViewProps } from 'react-native';[m
+[31m-[m
+[31m-import { useThemeColor } from '@/hooks/useThemeColor';[m
+[31m-[m
+[31m-export type ThemedViewProps = ViewProps & {[m
+[31m-  lightColor?: string;[m
+[31m-  darkColor?: string;[m
+[31m-};[m
+[31m-[m
+[31m-export function ThemedView({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) {[m
+[31m-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');[m
+[31m-[m
+[31m-  return <View style={[{ backgroundColor }, style]} {...otherProps} />;[m
+[31m-}[m
+[1mdiff --git a/components/__tests__/ThemedText-test.tsx b/components/__tests__/ThemedText-test.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 1ac3225..0000000[m
+[1m--- a/components/__tests__/ThemedText-test.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,10 +0,0 @@[m
+[31m-import * as React from 'react';[m
+[31m-import renderer from 'react-test-renderer';[m
+[31m-[m
+[31m-import { ThemedText } from '../ThemedText';[m
+[31m-[m
+[31m-it(`renders correctly`, () => {[m
+[31m-  const tree = renderer.create(<ThemedText>Snapshot test!</ThemedText>).toJSON();[m
+[31m-[m
+[31m-  expect(tree).toMatchSnapshot();[m
+[31m-});[m
+[1mdiff --git a/components/__tests__/__snapshots__/ThemedText-test.tsx.snap b/components/__tests__/__snapshots__/ThemedText-test.tsx.snap[m
+[1mdeleted file mode 100644[m
+[1mindex b68e53e..0000000[m
+[1m--- a/components/__tests__/__snapshots__/ThemedText-test.tsx.snap[m
+[1m+++ /dev/null[m
+[36m@@ -1,24 +0,0 @@[m
+[31m-// Jest Snapshot v1, https://goo.gl/fbAQLP[m
+[31m-[m
+[31m-exports[`renders correctly 1`] = `[m
+[31m-<Text[m
+[31m-  style={[m
+[31m-    [[m
+[31m-      {[m
+[31m-        "color": "#11181C",[m
+[31m-      },[m
+[31m-      {[m
+[31m-        "fontSize": 16,[m
+[31m-        "lineHeight": 24,[m
+[31m-      },[m
+[31m-      undefined,[m
+[31m-      undefined,[m
+[31m-      undefined,[m
+[31m-      undefined,[m
+[31m-      undefined,[m
+[31m-    ][m
+[31m-  }[m
+[31m->[m
+[31m-  Snapshot test![m
+[31m-</Text>[m
+[31m-`;[m
+[1mdiff --git a/components/ui/IconSymbol.ios.tsx b/components/ui/IconSymbol.ios.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 9177f4d..0000000[m
+[1m--- a/components/ui/IconSymbol.ios.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,32 +0,0 @@[m
+[31m-import { SymbolView, SymbolViewProps, SymbolWeight } from 'expo-symbols';[m
+[31m-import { StyleProp, ViewStyle } from 'react-native';[m
+[31m-[m
+[31m-export function IconSymbol({[m
+[31m-  name,[m
+[31m-  size = 24,[m
+[31m-  color,[m
+[31m-  style,[m
+[31m-  weight = 'regular',[m
+[31m-}: {[m
+[31m-  name: SymbolViewProps['name'];[m
+[31m-  size?: number;[m
+[31m-  color: string;[m
+[31m-  style?: StyleProp<ViewStyle>;[m
+[31m-  weight?: SymbolWeight;[m
+[31m-}) {[m
+[31m-  return ([m
+[31m-    <SymbolView[m
+[31m-      weight={weight}[m
+[31m-      tintColor={color}[m
+[31m-      resizeMode="scaleAspectFit"[m
+[31m-      name={name}[m
+[31m-      style={[[m
+[31m-        {[m
+[31m-          width: size,[m
+[31m-          height: size,[m
+[31m-        },[m
+[31m-        style,[m
+[31m-      ]}[m
+[31m-    />[m
+[31m-  );[m
+[31m-}[m
+[1mdiff --git a/components/ui/IconSymbol.tsx b/components/ui/IconSymbol.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex f1fabd4..0000000[m
+[1m--- a/components/ui/IconSymbol.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,43 +0,0 @@[m
+[31m-// This file is a fallback for using MaterialIcons on Android and web.[m
+[31m-[m
+[31m-import MaterialIcons from '@expo/vector-icons/MaterialIcons';[m
+[31m-import { SymbolWeight } from 'expo-symbols';[m
+[31m-import React from 'react';[m
+[31m-import { OpaqueColorValue, StyleProp, ViewStyle } from 'react-native';[m
+[31m-[m
+[31m-// Add your SFSymbol to MaterialIcons mappings here.[m
+[31m-const MAPPING = {[m
+[31m-  // See MaterialIcons here: https://icons.expo.fyi[m
+[31m-  // See SF Symbols in the SF Symbols app on Mac.[m
+[31m-  'house.fill': 'home',[m
+[31m-  'paperplane.fill': 'send',[m
+[31m-  'chevron.left.forwardslash.chevron.right': 'code',[m
+[31m-  'chevron.right': 'chevron-right',[m
+[31m-} as Partial<[m
+[31m-  Record<[m
+[31m-    import('expo-symbols').SymbolViewProps['name'],[m
+[31m-    React.ComponentProps<typeof MaterialIcons>['name'][m
+[31m-  >[m
+[31m->;[m
+[31m-[m
+[31m-export type IconSymbolName = keyof typeof MAPPING;[m
+[31m-[m
+[31m-/**[m
+[31m- * An icon component that uses native SFSymbols on iOS, and MaterialIcons on Android and web. This ensures a consistent look across platforms, and optimal resource usage.[m
+[31m- *[m
+[31m- * Icon `name`s are based on SFSymbols and require manual mapping to MaterialIcons.[m
+[31m- */[m
+[31m-export function IconSymbol({[m
+[31m-  name,[m
+[31m-  size = 24,[m
+[31m-  color,[m
+[31m-  style,[m
+[31m-}: {[m
+[31m-  name: IconSymbolName;[m
+[31m-  size?: number;[m
+[31m-  color: string | OpaqueColorValue;[m
+[31m-  style?: StyleProp<ViewStyle>;[m
+[31m-  weight?: SymbolWeight;[m
+[31m-}) {[m
+[31m-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;[m
+[31m-}[m
+[1mdiff --git a/components/ui/TabBarBackground.ios.tsx b/components/ui/TabBarBackground.ios.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 6668e78..0000000[m
+[1m--- a/components/ui/TabBarBackground.ios.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,22 +0,0 @@[m
+[31m-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';[m
+[31m-import { BlurView } from 'expo-blur';[m
+[31m-import { StyleSheet } from 'react-native';[m
+[31m-import { useSafeAreaInsets } from 'react-native-safe-area-context';[m
+[31m-[m
+[31m-export default function BlurTabBarBackground() {[m
+[31m-  return ([m
+[31m-    <BlurView[m
+[31m-      // System chrome material automatically adapts to the system's theme[m
+[31m-      // and matches the native tab bar appearance on iOS.[m
+[31m-      tint="systemChromeMaterial"[m
+[31m-      intensity={100}[m
+[31m-      style={StyleSheet.absoluteFill}[m
+[31m-    />[m
+[31m-  );[m
+[31m-}[m
+[31m-[m
+[31m-export function useBottomTabOverflow() {[m
+[31m-  const tabHeight = useBottomTabBarHeight();[m
+[31m-  const { bottom } = useSafeAreaInsets();[m
+[31m-  return tabHeight - bottom;[m
+[31m-}[m
+[1mdiff --git a/components/ui/TabBarBackground.tsx b/components/ui/TabBarBackground.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex 70d1c3c..0000000[m
+[1m--- a/components/ui/TabBarBackground.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1,6 +0,0 @@[m
+[31m-// This is a shim for web and Android where the tab bar is generally opaque.[m
+[31m-export default undefined;[m
+[31m-[m
+[31m-export function useBottomTabOverflow() {[m
+[31m-  return 0;[m
+[31m-}[m
+[1mdiff --git a/constants/Colors.ts b/constants/Colors.ts[m
+[1mdeleted file mode 100644[m
+[1mindex 4b0d834..0000000[m
+[1m--- a/constants/Colors.ts[m
+[1m+++ /dev/null[m
+[36m@@ -1,28 +0,0 @@[m
+[31m-/**[m
+[31m- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.[m
+[31m- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.[m
+[31m- */[m
+[31m-[m
+[31m-const tintColorLight = '#0a7ea4';[m
+[31m-const tintColorDark = '#fff';[m
+[31m-const lightPurple = '#d17af9';[m
+[31m-const darkPurple = '#8027d6';[m
+[31m-[m
+[31m-e
