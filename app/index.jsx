@@ -5,7 +5,7 @@ import React, { useState, useRef,useEffect  } from "react";
 
 import { StatusBar } from "expo-status-bar";
 
-import { supabase } from './supabase';
+import { supabase } from './services/supabase';
 import styled from "styled-components/native";
 
 import Container from "./components/Container";
