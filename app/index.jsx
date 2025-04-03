@@ -8,6 +8,8 @@ import { StatusBar } from "expo-status-bar";
 import { supabase } from './services/supabase';
 import styled from "styled-components/native";
 
+import HomeScreen from './screens/HomeScreen';
+
 import Container from "./components/Container";
 import Header from "./components/Header";
 import ItemList from "./components/Item";
@@ -16,18 +18,13 @@ import Toggle from "./components/Toggle";
 import Inventory from './models/Inventory';
 import Food from './models/Food';
 
-const items = [
-  { id: 1, name: "Bolognese", daysLeft: 1, icon: ":spaghetti:" },
-  { id: 2, name: "Fresh Cream", daysLeft: 1, icon: ":milk:" },
-  { id: 3, name: "Ground Beef", daysLeft: 3, icon: ":cut_of_meat:" },
-  { id: 4, name: "Chicken", daysLeft: 3, icon: ":poultry_leg:" },
-];
-
 let a = new Food("Petit Beurre Pocket", "Belle France", "2025-04-01", null, "2025-10-01", "3258561020686", 1, true);
 let b = new Food("Yop de wish", "Pâturage", "2025-04-17", null, "2025-04-19", "3250391693009", 1, true);
 let c = new Food("Filet mignon", "", "2025-04-18", null, "2025-04-22", "", 2, false);
 
 const aFridge = new Inventory(3, [a,b,c]);
+
+const items = aFridge.inventoryFoodList;
 
 export default function App() {
   const [selected, setSelected] = useState(1);
@@ -60,40 +57,6 @@ export default function App() {
   const [newFood, setNewFood] = useState("");
 
   const [userNameFood, setUserNameFood] = useState('');
-
-  const fetchFoods = async () => {
-    const {data, error} = await supabase.from('fridge_table').select("*");
-    if(error){
-      console.log("Probleme de fetch : ", error);
-    } else {
-      setFoodList(data);
-    }
-  };
-
-  useEffect(() => {
-    fetchFoods();
-  }, []);
-
-  const addFood = async () => {
-    const newFoodData = {
-      food_name: userNameFood,
-      isOpened: false,
-    };
-    const {data, error} = await supabase
-    .from("fridge_table")
-    .insert([newFoodData])
-    .select() 
-    .single();
-
-    if(error){
-      console.log("Probleme d'ajout : ", error);
-    } else {
-      setFoodList((prev) => [...prev, data]);
-      setNewFood("");
-    }
-  };
-
-  // -----------------------------
 
   return (
     <Container>
