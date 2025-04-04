@@ -1,5 +1,11 @@
 import { supabase } from './supabase';
 
+import { useEffect, useState } from 'react';
+
+const [foodList, setFoodList] = useState([]);
+
+const [newFood, setNewFood] = useState("");
+
 const fetchFoods = async () => {
     const {data, error} = await supabase.from('fridge_table').select("*");
     if(error){
@@ -28,4 +34,4 @@ const addFood = async () => {
     }
 };
 
-export default { fetchFoods, addFood };
+//export default { fetchFoods, addFood };
