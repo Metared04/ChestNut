@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 import { Text, View, TextInput, Button, ActivityIndicator, FlatList } from "react-native";
 
 import { supabase } from '../services/supabase';
@@ -62,3 +64,5 @@ const AddFood = () => {
         </View>
     );
 };
+
+export default AddFood;

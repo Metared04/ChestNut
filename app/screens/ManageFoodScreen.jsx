@@ -29,8 +29,8 @@ function ManageFoodScreen() {
     <View>
       <AddFood />
       <FoodList />
-  </View>
-);
+    </View>
+  );
 }
 
 export default ManageFoodScreen;
