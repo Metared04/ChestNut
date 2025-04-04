@@ -1,6 +1,6 @@
 class Food
 {
-        constructor(foodId = Math.floor(Math.random() * (1500 - 500 + 1)) + 500, foodName = "Unknown", foodBrand = "Unknown", foodRegisteredDate = "2025-01-01", foodOpeningDate = null, foodExpirationDate = "2025-01-02", foodBarCode = "0000000000000", foodQty = 1, foodIsOpened = false) 
+        constructor(foodId = Math.floor(Math.random() * (1500 - 500 + 1)) + 500, foodName = "", foodBrand = "", foodRegisteredDate = "2025-01-01", foodOpeningDate = null, foodExpirationDate = "2025-01-02", foodBarCode = "", foodQty = 1, foodIsOpened = false) 
         {
                 this.foodId = foodId;
                 this.foodName = foodName;

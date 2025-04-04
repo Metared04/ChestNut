@@ -18,17 +18,33 @@ const AddFood = () => {
     const [userFoodBarCode, setUserFoodBarCode] = useState("");
     const [userFoodQty, setUserFoodQty] = useState(0);
     const [userFoodIsOpened, setUserFoodIsOpened] = useState(false);
-  
+
+    const [food, setFood] = useState(new Food());
+
+    const handleChange = (key, value) => {
+        setFood(prev => new Food(
+            prev.foodId,
+            key === "foodName" ? value : prev.foodName,
+            key === "foodBrand" ? value : prev.foodBrand,
+            key === "foodRegisteredDate" ? value : prev.foodRegisteredDate,
+            key === "foodOpeningDate" ? value : prev.foodOpeningDate,
+            key === "foodExpirationDate" ? value : prev.foodExpirationDate,
+            key === "foodBarCode" ? value : prev.foodBarCode,
+            key === "foodQty" ? parseInt(value) : prev.foodQty,
+            key === "foodIsOpened" ? value : prev.foodIsOpened
+        ));
+    };
+
     const addFood = async () => {
       const newFoodData = {
-        food_name: userFoodName,
-        food_brands: userFoodBrand,
-        food_register_date: userFoodRegisterDate,
-        food_opening_date: userFoodOpeningDate,
-        food_expiration_date: userFoodExpirationDate,
-        food_bar_code: userFoodBarCode,
-        food_qty: userFoodQty,
-        food_is_opened: userFoodIsOpened,
+        food_name: food.foodName,
+        food_brand: food.foodBrand,
+        food_registered_date: food.foodRegisteredDate.toISOString().split('T')[0],
+        food_opening_date: food.foodOpeningDate ? food.foodOpeningDate.toISOString().split('T')[0] : null,
+        food_expiration_date: food.foodExpirationDate.toISOString().split('T')[0],
+        food_bar_code: food.foodBarCode,
+        food_qty: food.foodQty,
+        food_is_opened: food.foodIsOpened,
       };
 
       const {data, error} = await supabase
@@ -40,27 +56,36 @@ const AddFood = () => {
       if(error){
         console.log("Probleme d'ajout : ", error);
       } else {
-        setFoodList((prev) => [...prev, data]);
-        setNewFood("");
+        // setFoodList((prev) => [...prev, data]);
+        console.log("Ajoute !")
+        setFood(new Food());
       }
     };
 
     return (
-        <View>
-            <TextInput 
-            placeholder="Pomme ..." 
-            value={userFoodName} 
-            onChangeText={setUserFoodName}
+         <View>
+            <TextInput
+                placeholder="Nom"
+                value={food.foodName}
+                onChangeText={(text) => handleChange("foodName", text)}
             />
             <TextInput
-            placeholder="Marque"
-            value={userFoodBrand}
-            onChangeText={setUserFoodBrand}
-            />      
-            <Button 
-            title="Ajouter" 
-            onPress={addFood} 
+                placeholder="Marque"
+                value={food.foodBrand}
+                onChangeText={(text) => handleChange("foodBrand", text)}
             />
+            <TextInput
+                placeholder="Code barre"
+                value={food.foodBarCode}
+                onChangeText={(text) => handleChange("foodBarCode", text)}
+            />
+            <TextInput
+                placeholder="Quantité"
+                keyboardType="numeric"
+                value={food.foodQty.toString()}
+                onChangeText={(text) => handleChange("foodQty", text)}
+            />
+            <Button title="Ajouter" onPress={addFood} />
         </View>
     );
 };
