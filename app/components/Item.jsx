@@ -34,9 +34,9 @@ const ItemName = styled.Text`
 const ItemList = ({ items, selected, setSelected }) => (
   <ItemContainer>
     {items.map((item) => (
-      <ItemBox key={item.id} selected={item.id === selected} onPress={() => setSelected(item.id)}>
-        <ItemIcon>{item.icon}</ItemIcon>
-        <ItemName selected={item.id === selected}>{item.name}</ItemName>
+      <ItemBox key={item.foodId} selected={item.foodId === selected} onPress={() => setSelected(item.foodId)}>
+        <ItemIcon>{item.getFoodIcon()}</ItemIcon>
+        <ItemName selected={item.id === selected}>{item.getFoodName()}</ItemName>
       </ItemBox>
     ))}
   </ItemContainer>

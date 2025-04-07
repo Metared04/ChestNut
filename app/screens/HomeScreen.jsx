@@ -4,23 +4,21 @@ import { useEffect, useState, useRef } from 'react';
 
 import styled from "styled-components/native";
 
+import { supabase } from "../services/supabase";
+
 import Container from "../components/Container";
 import Header from "../components/Header";
 import ItemList from "../components/Item";
 import Toggle from "../components/Toggle";
 
-import { StatusBar } from "expo-status-bar";
+import Food from "../models/Food";
 
-const items = [
-    { id: 1, name: "Bolognese", daysLeft: 1, icon: ":spaghetti:" },
-    { id: 2, name: "Fresh Cream", daysLeft: 1, icon: ":milk:" },
-    { id: 3, name: "Ground Beef", daysLeft: 3, icon: ":cut_of_meat:" },
-    { id: 4, name: "Chicken", daysLeft: 3, icon: ":poultry_leg:" },
-  ];
+import { StatusBar } from "expo-status-bar";
 
 function HomeScreen() {
     const [selected, setSelected] = useState(1);
     const [isFridge, setIsFridge] = useState(true);
+    const [expiringFoods, setExpiringFoods] = useState([]);
     const slideAnim = useRef(new Animated.Value(0)).current;
     
     const toggleFridgeFreezer = () => {
@@ -31,11 +29,47 @@ function HomeScreen() {
         }).start();
        setIsFridge(!isFridge);
     };
+
+    const fetchExpiringFoods = async () => {
+        const { data, error } = await supabase.from("fridge_table").select("*");
+    
+        if (error) {
+          console.error("Erreur de fetch des aliments :", error);
+          return;
+        }
+    
+        const foodInstances = data.map(
+          (food) =>
+            new Food(
+              food.food_id,
+              food.food_name,
+              food.food_brand,
+              food.food_registered_date,
+              food.food_opening_date,
+              food.food_expiration_date,
+              food.food_bar_code,
+              food.food_qty,
+              food.food_is_opened
+            )
+        );
+    
+        const expiring = foodInstances.filter((item) => item.foodIsAlmostExpired());
+        setExpiringFoods(expiring);
+      };
+
+    useEffect(() => {
+        fetchExpiringFoods();
+      }, []);
+
     return (
         <Container>
             <StatusBar style="dark" />
             <Header />
-            <ItemList items={items} selected={selected} setSelected={setSelected} />
+            {expiringFoods.length === 0 ? (
+                <Text>RAS</Text>
+            ) : (
+                <ItemList items={expiringFoods} selected={selected} setSelected={setSelected} />
+            )}
             <Toggle isFridge={isFridge} slideAnim={slideAnim} toggleFridgeFreezer={toggleFridgeFreezer} />
         </Container>
     );

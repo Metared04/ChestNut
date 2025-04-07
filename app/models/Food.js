@@ -1,6 +1,6 @@
 class Food
 {
-        constructor(foodId = Math.floor(Math.random() * (1500 - 500 + 1)) + 500, foodName = "", foodBrand = "", foodRegisteredDate = "2025-01-01", foodOpeningDate = null, foodExpirationDate = "2025-01-02", foodBarCode = "", foodQty = 1, foodIsOpened = false) 
+        constructor(foodId = Math.floor(Math.random() * (1500 - 500 + 1)) + 500, foodName = "", foodBrand = "", foodRegisteredDate = new Date().toISOString().split('T')[0], foodOpeningDate = null, foodExpirationDate = "2025-01-02", foodBarCode = "", foodQty = 1, foodIsOpened = false) 
         {
                 this.foodId = foodId;
                 this.foodName = foodName;
@@ -22,23 +22,41 @@ class Food
                 return this.foodIsOpened;
         }
 
+        setRegisteredDate(date) {
+                this.foodRegisteredDate = new Date(date);
+        }
+        
+        setOpeningDate(date) {
+                this.foodOpeningDate = date ? new Date(date) : null;
+        }
+        
+        setExpirationDate(date) {
+                this.foodExpirationDate = new Date(date);
+        }
+
+        setFoodIsOpened(state){
+                this.foodIsOpened = state;
+        }
+
         foodOpened(){
                 if(!this.foodIsOpened){
-                        this.foodIsOpened = true;
-                        this.foodOpeningDate = new Date();
+                        this.setFoodIsOpened(true);
+                        this.setOpeningDate(new Date());
                 }
         }
 
         getNumberOfValidityDays(){
+                const today = new Date();
                 if(this.foodIsOpened === true && this.foodOpeningDate !== null){
                         const startDate = this.foodOpeningDate;
-                        const nbOfValidityDays = this.foodExpirationDate - startDate;
-                return Math.round(nbOfValidityDays) / (1000 * 60 * 60 * 24);
+                        const nbOfValidityDays = this.foodExpirationDate - today;
+                        console.log("Trouve !")
+                return Math.round((nbOfValidityDays) / (1000 * 60 * 60 * 24)) + 1;
                 }
                 const startDate = this.foodRegisteredDate;
-                const nbOfValidityDays = this.foodExpirationDate - startDate;
+                const nbOfValidityDays = this.foodExpirationDate - today;
 
-                return nbOfValidityDays / (1000 * 60 * 60 * 24);
+                return Math.round((nbOfValidityDays) / (1000 * 60 * 60 * 24)) + 1;
         }
 
         foodIsAlmostExpired(){
@@ -74,6 +92,20 @@ class Food
                 }
         }
 
+        getFoodIcon() {
+                const name = this.foodName.toLowerCase();
+
+                if (name.includes("poulet")) return "🍗";
+                if (name.includes("lait") || name.includes("crème")) return "🥛";
+                if (name.includes("boeuf") || name.includes("steak")) return "🥩";
+                if (name.includes("fromage")) return "🧀";
+                if (name.includes("yaourt") || name.includes("yop")) return "🍶";
+                if (name.includes("pâtes") || name.includes("bolognaise")) return "🍝";
+                if (name.includes("poisson") || name.includes("saumon")) return "🐟";
+                if (name.includes("dessert") || name.includes("sucré")) return "🍰";
+
+                return "🍽️";
+        }
 }
 
 export default Food

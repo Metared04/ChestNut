@@ -6,7 +6,32 @@ import { supabase } from '../services/supabase';
 
 import Food from '../models/Food';
 
-// composant qui va recuperer les donnees necessaires
+import styled from "styled-components/native";
+
+const ItemContainer = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 16px;
+`;
+
+const ItemBox = styled.TouchableOpacity`
+  width: 48%;
+  height: 100px;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: ${({ selected }) => (selected ? "#6b46c1" : "#e5e7eb")};
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ItemName = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  color: ${({ selected }) => (selected ? "white" : "#6b7280")};
+`;
 
 const FoodList = () => {
     const [foodList, setFoodList] = useState([]);
@@ -57,6 +82,19 @@ const FoodList = () => {
         fetchFoods();
     }, []);
     
+    const deleteFood = async (foodId) => {
+        const { error } = await supabase
+          .from("fridge_table")
+          .delete()
+          .eq("food_id", foodId);
+    
+        if (error) {
+          console.log("Erreur dans la suppression :", error);
+        } else {
+          setFoodList((prev) => prev.filter((food) => food.foodId !== foodId));
+        }
+    };
+
     if (loading) {
         return <ActivityIndicator size="large" color="#0000ff" />;
     }
@@ -85,7 +123,7 @@ const FoodList = () => {
       };
     
     return (
-        <View>
+        <View style={{ flex: 1 }}>
             {foodList.length === 0 ? (
                 <Text>Il n'y pas d'aliment ici :(</Text>
             ) : (
@@ -102,11 +140,11 @@ const FoodList = () => {
                     
                         return (
                             <View style={{ padding: 10, borderBottomWidth: 1 }}>
-                                <Text>{item.foodName} - {item.foodBrand}</Text>
-                                <Text>Jour restant : {item.getNumberOfValidityDays()}</Text>
+                                <ItemName>{item.foodName} - {item.foodBrand}</ItemName>
+                                <Text>Jour restant : {item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()}</Text>
                                 <Text>Quantité : {item.foodQty}</Text>
                                 <Button title={item.foodIsOpened ? "Déjà ouvert" : "Pas encore ouvert"} onPress={() => openingFood(item.foodId, item.foodIsOpened)} />
-                                <Button title="Logo poubelle"></Button>
+                                <Button title="Logo poubelle" onPress={() => deleteFood(item.foodId)}></Button>
                             </View>
                         );
                     }}

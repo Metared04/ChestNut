@@ -10,6 +10,6 @@ import HomeScreen from './screens/HomeScreen';
 export default function App() {
 
   return (
-    <ManageFoodScreen />
+    <HomeScreen />
   );
 }
