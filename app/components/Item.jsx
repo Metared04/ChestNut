@@ -10,13 +10,15 @@ const ItemContainer = styled.View`
 `;
 
 const ItemBox = styled.TouchableOpacity`
-  width: 48%;
+  width: 35%;
   height: 100px;
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
   background-color: ${({ selected }) => (selected ? "#6b46c1" : "#e5e7eb")};
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
 `;
 
@@ -37,6 +39,7 @@ const ItemList = ({ items, selected, setSelected }) => (
       <ItemBox key={item.foodId} selected={item.foodId === selected} onPress={() => setSelected(item.foodId)}>
         <ItemIcon>{item.getFoodIcon()}</ItemIcon>
         <ItemName selected={item.id === selected}>{item.getFoodName()}</ItemName>
+        <ItemName selected={item.id === selected}>{item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()} jour(s)</ItemName>
       </ItemBox>
     ))}
   </ItemContainer>

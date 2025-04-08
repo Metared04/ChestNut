@@ -2,8 +2,6 @@ import { Text, View, TextInput, Button, FlatList, Animated } from "react-native"
 
 import { useEffect, useState, useRef } from 'react';
 
-import styled from "styled-components/native";
-
 import { supabase } from "../services/supabase";
 
 import Container from "../components/Container";
@@ -31,7 +29,7 @@ function HomeScreen() {
     };
 
     const fetchExpiringFoods = async () => {
-        const { data, error } = await supabase.from("fridge_table").select("*");
+        const { data, error } = await supabase.from("all_food_table").select("*");
     
         if (error) {
           console.error("Erreur de fetch des aliments :", error);
@@ -52,9 +50,18 @@ function HomeScreen() {
               food.food_is_opened
             )
         );
+        
+        const expiring = foodInstances
+        .filter((item) => item.foodIsAlmostExpired())
+        .sort((a, b) => a.getNumberOfValidityDays() - b.getNumberOfValidityDays());
     
-        const expiring = foodInstances.filter((item) => item.foodIsAlmostExpired());
-        setExpiringFoods(expiring);
+      const notExpiringYet = foodInstances
+        .filter((item) => !item.foodIsAlmostExpired())
+        .sort((a, b) => a.getNumberOfValidityDays() - b.getNumberOfValidityDays());
+    
+      const allFood = [...expiring, ...notExpiringYet];
+    
+        setExpiringFoods(allFood);
       };
 
     useEffect(() => {
@@ -66,7 +73,7 @@ function HomeScreen() {
             <StatusBar style="dark" />
             <Header />
             {expiringFoods.length === 0 ? (
-                <Text>RAS</Text>
+                <Text>Vous n'avez pas aliments encore :(</Text>
             ) : (
                 <ItemList items={expiringFoods} selected={selected} setSelected={setSelected} />
             )}

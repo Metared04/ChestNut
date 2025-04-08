@@ -7,6 +7,7 @@ import { supabase } from '../services/supabase';
 import Food from '../models/Food';
 
 const AddFood = () => {
+  /*
     const [selected, setSelected] = useState(1);
 
     const [newFood, setNewFood] = useState("");
@@ -18,7 +19,7 @@ const AddFood = () => {
     const [userFoodBarCode, setUserFoodBarCode] = useState("");
     const [userFoodQty, setUserFoodQty] = useState(0);
     const [userFoodIsOpened, setUserFoodIsOpened] = useState(false);
-
+  */
     const [food, setFood] = useState(new Food());
 
     const handleChange = (key, value) => {
@@ -48,7 +49,7 @@ const AddFood = () => {
       };
 
       const {data, error} = await supabase
-      .from("fridge_table")
+      .from("all_food_table")
       .insert([newFoodData])
       .select() 
       .single();
