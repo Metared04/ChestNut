@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
+import { FontAwesome } from '@expo/vector-icons'; // Assurez-vous d'importer FontAwesome
 
 const ItemContainer = styled.View`
   flex-direction: row;
@@ -10,36 +11,81 @@ const ItemContainer = styled.View`
 `;
 
 const ItemBox = styled.TouchableOpacity`
-  width: 35%;
-  height: 100px;
+  width: 48%;
+  height: 120px;
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 16px;
-  background-color: ${({ selected }) => (selected ? "#6b46c1" : "#e5e7eb")};
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+  background-color: ${({ selected }) => (selected ? "#8c52ff" : "#f2f2f2")};
+  position: relative;
 `;
 
-const ItemIcon = styled.Text`
-  font-size: 24px;
-  margin-right: 10px;
+const ItemContent = styled.View`
+  justify-content: center;
 `;
 
 const ItemName = styled.Text`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  color: ${({ selected }) => (selected ? "white" : "#6b7280")};
+  color: ${({ selected }) => (selected ? "white" : "#444")};
+  margin-top: 8px;
 `;
+
+const DaysLeft = styled.Text`
+  font-size: 14px;
+  color: ${({ selected }) => (selected ? "white" : "#888")};
+  margin-top: 4px;
+`;
+
+const CheckCircle = styled.View`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.3);
+  align-items: center;
+  justify-content: center;
+`;
+
+// Fonction pour déterminer l'icône en fonction du nom de l'aliment
+const getFoodIcon = (foodName) => {
+  const name = foodName.toLowerCase();
+  if (name.includes('bolognese') || name.includes('sauce')) return 'cutlery';
+  if (name.includes('cream') || name.includes('crème')) return 'glass';
+  if (name.includes('beef') || name.includes('boeuf')) return 'cutlery';
+  if (name.includes('chicken') || name.includes('poulet')) return 'drumstick-bite';
+  return 'shopping-basket'; // Icône par défaut
+};
 
 const ItemList = ({ items, selected, setSelected }) => (
   <ItemContainer>
     {items.map((item) => (
-      <ItemBox key={item.foodId} selected={item.foodId === selected} onPress={() => setSelected(item.foodId)}>
-        <ItemIcon>{item.getFoodIcon()}</ItemIcon>
-        <ItemName selected={item.id === selected}>{item.getFoodName()}</ItemName>
-        <ItemName selected={item.id === selected}>{item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()} jour(s)</ItemName>
+      <ItemBox 
+        key={item.foodId} 
+        selected={item.foodId === selected} 
+        onPress={() => setSelected(item.foodId)}
+      >
+        <ItemContent>
+          <FontAwesome 
+            name={getFoodIcon(item.foodName)} 
+            size={24} 
+            color={item.foodId === selected ? "white" : "#888"} 
+          />
+          <ItemName selected={item.foodId === selected}>
+            {item.foodName}
+          </ItemName>
+          <DaysLeft selected={item.foodId === selected}>
+            {item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()} jour(s)
+          </DaysLeft>
+        </ItemContent>
+        
+        {item.foodId === selected && (
+          <CheckCircle>
+            <FontAwesome name="check" size={16} color="white" />
+          </CheckCircle>
+        )}
       </ItemBox>
     ))}
   </ItemContainer>
