@@ -51,16 +51,7 @@ const CheckCircle = styled.View`
 `;
 
 // Fonction pour déterminer l'icône en fonction du nom de l'aliment
-/*
-const getFoodIcon = (foodName) => {
-  const name = foodName.toLowerCase();
-  if (name.includes('bolognese') || name.includes('sauce')) return 'cutlery';
-  if (name.includes('cream') || name.includes('crème')) return 'glass';
-  if (name.includes('beef') || name.includes('boeuf')) return 'cutlery';
-  if (name.includes('chicken') || name.includes('poulet')) return 'drumstick-bite';
-  return 'shopping-basket'; // Icône par défaut
-};
-*/
+
 const ItemList = ({ items, selected, setSelected }) => (
   <ItemContainer>
     {items.map((item) => (
