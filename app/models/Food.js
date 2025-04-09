@@ -95,16 +95,16 @@ class Food
         getFoodIcon() {
                 const name = this.foodName.toLowerCase();
 
-                if (name.includes("poulet")) return "🍗";
-                if (name.includes("lait") || name.includes("crème")) return "🥛";
-                if (name.includes("boeuf") || name.includes("steak")) return "🥩";
-                if (name.includes("fromage")) return "🧀";
-                if (name.includes("yaourt") || name.includes("yop")) return "🍶";
-                if (name.includes("pâtes") || name.includes("bolognaise")) return "🍝";
-                if (name.includes("poisson") || name.includes("saumon")) return "🐟";
-                if (name.includes("dessert") || name.includes("sucré")) return "🍰";
+                if (name.includes("poulet")) return 'drumstick-bite';
+                if (name.includes("lait") || name.includes("crème")) return 'glass';
+                if (name.includes("boeuf") || name.includes("steak")) return 'cutlery';
+                //if (name.includes("fromage")) return "🧀";
+                if (name.includes("yaourt") || name.includes("yop")) return 'glass';
+                if (name.includes("pâtes") || name.includes("bolognaise")) return 'cutlery';;
+                //if (name.includes("poisson") || name.includes("saumon")) return "🐟";
+                //if (name.includes("dessert") || name.includes("sucré")) return "🍰";
 
-                return "🍽️";
+                return 'shopping-basket';
         }
 
         getKeyword(){

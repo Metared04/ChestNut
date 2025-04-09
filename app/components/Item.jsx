@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import { FontAwesome } from '@expo/vector-icons'; // Assurez-vous d'importer FontAwesome
+import Food from "../models/Food";
 
 const ItemContainer = styled.View`
   flex-direction: row;
@@ -50,6 +51,7 @@ const CheckCircle = styled.View`
 `;
 
 // Fonction pour déterminer l'icône en fonction du nom de l'aliment
+/*
 const getFoodIcon = (foodName) => {
   const name = foodName.toLowerCase();
   if (name.includes('bolognese') || name.includes('sauce')) return 'cutlery';
@@ -58,7 +60,7 @@ const getFoodIcon = (foodName) => {
   if (name.includes('chicken') || name.includes('poulet')) return 'drumstick-bite';
   return 'shopping-basket'; // Icône par défaut
 };
-
+*/
 const ItemList = ({ items, selected, setSelected }) => (
   <ItemContainer>
     {items.map((item) => (
@@ -69,7 +71,7 @@ const ItemList = ({ items, selected, setSelected }) => (
       >
         <ItemContent>
           <FontAwesome 
-            name={getFoodIcon(item.foodName)} 
+            name={item.getFoodIcon()} 
             size={24} 
             color={item.foodId === selected ? "white" : "#888"} 
           />
