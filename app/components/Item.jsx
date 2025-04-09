@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
-import { FontAwesome } from '@expo/vector-icons'; // Assurez-vous d'importer FontAwesome
-import Food from "../models/Food";
+import { FontAwesome } from '@expo/vector-icons';
 
 const ItemContainer = styled.View`
   flex-direction: row;
@@ -49,8 +48,6 @@ const CheckCircle = styled.View`
   align-items: center;
   justify-content: center;
 `;
-
-// Fonction pour déterminer l'icône en fonction du nom de l'aliment
 
 const ItemList = ({ items, selected, setSelected }) => (
   <ItemContainer>

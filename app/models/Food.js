@@ -98,10 +98,11 @@ class Food
                 if (name.includes("poulet")) return 'drumstick-bite';
                 if (name.includes("lait") || name.includes("crème")) return 'glass';
                 if (name.includes("boeuf") || name.includes("steak")) return 'cutlery';
-                //if (name.includes("fromage")) return "🧀";
                 if (name.includes("yaourt") || name.includes("yop")) return 'glass';
-                if (name.includes("pâtes") || name.includes("bolognaise")) return 'cutlery';;
-                //if (name.includes("poisson") || name.includes("saumon")) return "🐟";
+                if (name.includes("pâtes") || name.includes("bolognaise")) return 'cutlery';
+                //if (name.includes("bacon")) return 'bacon';
+                //if (name.includes("fromage")) return "🧀";
+                //if (name.includes("poisson") || name.includes("saumon")) return 'fish-cooked';
                 //if (name.includes("dessert") || name.includes("sucré")) return "🍰";
 
                 return 'shopping-basket';
