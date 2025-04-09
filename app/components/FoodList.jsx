@@ -8,6 +8,11 @@ import Food from '../models/Food';
 
 import styled from "styled-components/native";
 
+import Container from "../components/Container";
+import Header from "../components/Header";
+import ItemList from "../components/Item";
+import Toggle from "../components/Toggle";
+
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -126,9 +131,10 @@ const FoodList = () => {
       };
     
     return (
-        <View style={{ flex: 1 }}>
+        <Container>
+            
             {foodList.length === 0 ? (
-                <Text>Il n'y pas d'aliment ici :(</Text>
+                <Text style={{ textAlign: 'center', marginTop: 20 }}>Il n'y pas d'aliment ici :(</Text>
             ) : (
                 <FlatList 
                     style={{ borderWidth: 1}}
@@ -144,9 +150,9 @@ const FoodList = () => {
                             colors={['#8027d6', '#d17af6']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
-                            style={{ padding: 10, borderRadius: 50, width: '35%', borderWidth: 1, borderColor: '#8027d6', alignSelf: 'center'}}
+                            style={{ padding: 10, borderRadius: 20, marginVertical: 6,  borderWidth: 1, borderColor: '#8027d6', alignSelf: 'center', marginVertical: 8}}
                             >   
-                                <ItemName >{item.foodName} - {item.foodBrand}</ItemName>
+                                <ItemName selected={true}>{item.foodName} - {item.foodBrand}</ItemName>
                                 <View style={{ marginBottom: 10, alignItems: 'center', color: '#FFF' }}>
                                     <Text>Jour restant : {item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()}</Text>
                                     <Text>Quantité : {item.foodQty}</Text>
@@ -164,11 +170,13 @@ const FoodList = () => {
                             </LinearGradient>
                         );
                     }}
+                    contentContainerStyle={{ paddingBottom: 20 }}
                     refreshing={refreshing}
                     onRefresh={fetchFoods}
-                />
-            )}
-        </View>
+                    />
+                )}
+            
+        </Container>
     );
 };
 

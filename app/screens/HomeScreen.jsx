@@ -73,7 +73,7 @@ function HomeScreen() {
             <StatusBar style="dark" />
             <Header />
             {expiringFoods.length === 0 ? (
-                <Text>Vous n'avez pas aliments encore :(</Text>
+                <Text>Vous n'avez pas d'aliments encore :(</Text>
             ) : (
                 <ItemList items={expiringFoods} selected={selected} setSelected={setSelected} />
             )}
@@ -81,5 +81,9 @@ function HomeScreen() {
         </Container>
     );
 }
+// Mettre que les 4 premiers ligne par ligne
+// Mettre 
+// Peut etre essayer de faire une moyenne basse de duree de conso
+// Preremplir le champ date de peremption avec ca 
 
 export default HomeScreen;

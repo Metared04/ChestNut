@@ -106,6 +106,89 @@ class Food
 
                 return "🍽️";
         }
+
+        getKeyword(){
+                const barCode = this.foodBarCode;
+
+                fetch(`https://world.openfoodfacts.org/api/v3/product/${barCode}.json`)
+		.then(response => {
+			if (!response.ok) {
+				//throw new Error("Erreur : ", response.status);
+                                return "null"
+			}
+			return response.json();
+		})
+		.then(data => {
+			if(!data.product) {
+				console.error("Produit introuvable.");
+				return "null";
+			}
+			
+                        return data.product.categories.split(",");
+	        })
+	        .catch(error => console.error("Erreur :", error));
+        }
+
+        async recommandedConservationDuration() {
+                const keywords = await this.getKeyword();
+                switch(keywords)
+                {
+                        case "abats frais":
+                        case "viande hachée du boucher":
+                        case "saucisses":
+                        case "fruits de mer":
+                        case "poissons crus":
+                                return 1;
+                        case "crême fraîche au lait cru":
+                        case "oeufs durs":
+                        case "viande cuite emballée":
+                        case "fruits rouge":
+                                return 2;
+                        case "yaourt":
+                        case "lait UHT":
+                        case "sauce pour pâtes":
+                        case "charcuterie tranchée":
+                        case "charcuterie préemballée":
+                        case "potage":
+                        case "soupe":
+                                return 3;
+                        case "crême fraîche pasteurisée":
+                                return 4;
+                        case "jus de fruit entamé":
+                        case "jus de fruit":
+                        case "raisins":
+                        case "prunes":
+                                return 5;
+                        case "lait ultra-pasteurisé":
+                        case "fromage rapé":
+                        case "fromage frais":
+                        case "pêche":
+                        case "abricots":
+                        case "poivrons":
+                        case "radis":
+                        case "navet":
+                        case "tomates":
+                        case "courgettes":
+                        case "concombre":
+                        case "poireau":
+                                return 7;
+                        case "beurre":
+                                return 14;
+                        case "frommage à pâte dure":
+                        case "oeufs frais":
+                        case "bettraves":
+                                return 21;
+                        case "mayonnaise":
+                        case "pommes":
+                                return 60;
+                        case "carottes":
+                                return 90;
+                        case "ketchup":
+                                return 364;
+                        case "null":
+                                return 0;
+                }
+        }
 }
 
 export default Food
