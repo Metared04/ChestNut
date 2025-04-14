@@ -1,18 +1,27 @@
 class Food
 {
-        constructor(foodId = Math.floor(Math.random() * (1500 - 500 + 1)) + 500, foodName = "", foodBrand = "", foodRegisteredDate = new Date().toISOString().split('T')[0], foodOpeningDate = null, foodExpirationDate = "2025-01-02", foodBarCode = "", foodQty = 1, foodIsOpened = false) 
-        {
-                this.foodId = foodId;
+        constructor(
+                foodId = Math.floor(Math.random() * 501) + 500,
+                        foodName = "",
+                foodBrand = "",
+                foodRegistedDate = (new Date()).toISOString().split('T')[0],
+                foodOpeningDate = null,
+                foodExpirationDate = null,
+                foodBarCode = "",
+                foodQty = 1,
+                foodIsOpened = true
+            ) {
+                        this.foodId = foodId;
                 this.foodName = foodName;
                 this.foodBrand = foodBrand;
-                this.foodRegisteredDate = new Date(foodRegisteredDate);
-                this.foodOpeningDate = foodOpeningDate ? new Date(foodOpeningDate) : null;
-                this.foodExpirationDate = new Date(foodExpirationDate);
-                this.foodBarCode = foodBarCode;
+                this.foodRegistedDate = foodRegistedDate;
+                        this.foodOpeningDate = foodOpeningDate || foodRegistedDate;
+                        this.foodExpirationDate = foodExpirationDate
+                        ? foodExpirationDate : new Date(new Date(foodRegistedDate).setDate(new Date(foodRegistedDate).getDate() + 1)).toISOString().split('T')[0];
+                        this.foodBarCode = foodBarCode;
                 this.foodQty = foodQty;
-                // this.foodQty = Math.max(0, foodQty);
                 this.foodIsOpened = foodIsOpened;
-        }
+                }
 
         getFoodName() {
                 return this.foodName;
@@ -50,7 +59,7 @@ class Food
                 if(this.foodIsOpened === true && this.foodOpeningDate !== null){
                         const startDate = this.foodOpeningDate;
                         const nbOfValidityDays = this.foodExpirationDate - today;
-                        console.log("Trouve !")
+                        //console.log("Trouve !")
                 return Math.round((nbOfValidityDays) / (1000 * 60 * 60 * 24)) + 1;
                 }
                 const startDate = this.foodRegisteredDate;
@@ -108,88 +117,146 @@ class Food
                 return 'shopping-basket';
         }
 
-        getKeyword(){
-                const barCode = this.foodBarCode;
+        getNameAndKeywords() {
+		const barCode = this.foodBarCode;
+		console.log(" => ",barCode);
 
-                fetch(`https://world.openfoodfacts.org/api/v3/product/${barCode}.json`)
-		.then(response => {
-			if (!response.ok) {
-				//throw new Error("Erreur : ", response.status);
-                                return "null"
-			}
-			return response.json();
-		})
-		.then(data => {
-			if(!data.product) {
-				console.error("Produit introuvable.");
-				return "null";
-			}
-			
-                        return data.product.categories.split(",");
-	        })
-	        .catch(error => console.error("Erreur :", error));
-        }
+		return fetch(`https://world.openfoodfacts.org/api/v3/product/${barCode}.json`)
+			.then(response => {
+				console.log("Réponse reçue :", response.status);
+				if (!response.ok) {
+					console.error("Erreur HTTP :", response.status);
+					return null;
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (!data.product) {
+					console.error("Produit introuvable.");
+					return null;
+				}
 
-        async recommandedConservationDuration() {
-                const keywords = await this.getKeyword();
-                switch(keywords)
-                {
-                        case "abats frais":
-                        case "viande hachée du boucher":
-                        case "saucisses":
-                        case "fruits de mer":
-                        case "poissons crus":
-                                return 1;
-                        case "crême fraîche au lait cru":
-                        case "oeufs durs":
-                        case "viande cuite emballée":
-                        case "fruits rouge":
-                                return 2;
-                        case "yaourt":
-                        case "lait UHT":
-                        case "sauce pour pâtes":
-                        case "charcuterie tranchée":
-                        case "charcuterie préemballée":
-                        case "potage":
-                        case "soupe":
-                                return 3;
-                        case "crême fraîche pasteurisée":
-                                return 4;
-                        case "jus de fruit entamé":
-                        case "jus de fruit":
-                        case "raisins":
-                        case "prunes":
-                                return 5;
-                        case "lait ultra-pasteurisé":
-                        case "fromage rapé":
-                        case "fromage frais":
-                        case "pêche":
-                        case "abricots":
-                        case "poivrons":
-                        case "radis":
-                        case "navet":
-                        case "tomates":
-                        case "courgettes":
-                        case "concombre":
-                        case "poireau":
-                                return 7;
-                        case "beurre":
-                                return 14;
-                        case "frommage à pâte dure":
-                        case "oeufs frais":
-                        case "bettraves":
-                                return 21;
-                        case "mayonnaise":
-                        case "pommes":
-                                return 60;
-                        case "carottes":
-                                return 90;
-                        case "ketchup":
-                                return 364;
-                        case "null":
-                                return 0;
-                }
-        }
+				const productRealName = data.product.product_name;
+				const allProductCategories = data.product.categories.split(",");
+
+				return { productRealName, allProductCategories };
+			})
+			.catch(error => {
+				console.error("Erreur :", error);
+				return null;
+			});
+	}
+	
+	async estimateExpirationDate() {
+		const productInfos = await this.getNameAndKeywords();
+
+		const categories = productInfos.allProductCategories;
+		const mainKeyword = getMainCategoryFromKeywords(categories);
+		const duration =  (mainKeyword);
+
+		const estimatedExpiration = new Date();
+		estimatedExpiration.setDate(estimatedExpiration.getDate() + duration);
+
+		this.setExpirationDate(estimatedExpiration);
+
+		return {
+			mainKeyword,
+			duration,
+			estimatedExpiration
+			};
+	}
 }
+
+const categoryMap = {
+	"abats frais": "Viandes",
+	"viande hachée du boucher": "Viandes",
+	"saucisses": "Viandes",
+	"viande cuite emballée": "Viandes",
+	"fruits de mer": "Poissons et Fruits de mer",
+	"poissons crus": "Poissons et Fruits de mer",
+	"charcuterie": "Charcuteries",
+	"bacon": "Charcuteries",
+	"charcuterie tranchée": "Charcuteries",
+	"charcuterie préemballée": "Charcuteries",
+	"crème fraîche au lait cru": "Crèmes",
+	"crème fraîche pasteurisée": "Crèmes",
+	"fromage râpé": "Fromages",
+	"fromage frais": "Fromages",
+	"fromage à pâte dure": "Fromages",
+	"lait UHT": "Laits et Produits Laitiers Divers",
+	"lait ultra-pasteurisé": "Laits et Produits Laitiers Divers",
+	"beurre": "Laits et Produits Laitiers Divers",
+	"oeufs frais": "Laits et Produits Laitiers Divers",
+	"yaourt": "Produits Transformés à Base de Lait",
+	"potage": "Soupe et Potage",
+	"soupe": "Soupe et Potage",
+	"sauce pour pâtes": "Sauces",
+	"jus de fruit": "Jus de Fruits",
+	"jus de fruit entamé": "Jus de Fruits",
+	"raisins": "Fruits",
+	"prunes": "Fruits",
+	"pêche": "Fruits",
+	"abricots": "Fruits",
+	"pommes": "Fruits",
+	"poivrons": "Fruits",
+	"radis": "Fruits",
+	"navet": "Fruits",
+	"tomates": "Fruits",
+	"courgettes": "Fruits",
+	"concombre": "Fruits",
+	"poireau": "Fruits",
+	"carottes": "Légumes",
+	"bettraves": "Légumes",
+	"mayonnaise": "Condiments et Sauces",
+	"ketchup": "Condiments et Sauces",
+	"pommes de terre": "Épicerie",
+
+};
+
+const shelfLifeMap = {
+  "abats frais": 1,
+  "viande hachée du boucher": 1,
+  "saucisses": 1,
+  "fruits de mer": 1,
+  "poissons crus": 1,
+  "crême fraîche au lait cru": 2,
+  "oeufs durs": 2,
+  "viande cuite emballée": 2,
+  "fruits rouge": 2,
+  "yaourt": 3,
+  "lait UHT": 3,
+  "sauce pour pâtes": 3,
+  "charcuterie": 3,
+  "charcuteries": 3,
+  "charcuterie tranchée": 3,
+  "charcuterie préemballée": 3,
+  "potage": 3,
+  "soupe": 3,
+  "crême fraîche pasteurisée": 4,
+  "jus de fruit entamé": 5,
+  "jus de fruit": 5,
+  "raisins": 5,
+  "prunes": 5,
+  "lait ultra-pasteurisé": 7,
+  "fromage rapé": 7,
+  "fromage frais": 7,
+  "pêche": 7,
+  "abricots": 7,
+  "poivrons": 7,
+  "radis": 7,
+  "navet": 7,
+  "tomates": 7,
+  "courgettes": 7,
+  "concombre": 7,
+  "poireau": 7,
+  "beurre": 14,
+  "frommage à pâte dure": 21,
+  "oeufs frais": 21,
+  "bettraves": 21,
+  "mayonnaise": 60,
+  "pommes": 60,
+  "carottes": 90,
+  "ketchup": 364,
+};
 
 export default Food

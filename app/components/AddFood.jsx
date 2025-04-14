@@ -3,24 +3,16 @@ import React, { useState } from 'react';
 import { Text, View, TextInput, Button, ActivityIndicator, FlatList } from "react-native";
 
 import { supabase } from '../services/supabase';
+import DateComponent from './DateComponent';
+import RecommandedDate from './RecommandedDate';
 
 import Food from '../models/Food';
 
 const AddFood = () => {
-  /*
-    const [selected, setSelected] = useState(1);
 
-    const [newFood, setNewFood] = useState("");
-    const [userFoodName, setUserFoodName] = useState('');
-    const [userFoodBrand, setUserFoodBrand] = useState('');
-    const [userFoodRegisterDate, setUserFoodRegisterDate] = useState("2025-04-04");
-    const [userFoodOpeningDate, setUserFoodOpeningDate] = useState("2025-04-04");
-    const [userFoodExpirationDate, setUserFoodExpirationDate] = useState("2025-04-04");
-    const [userFoodBarCode, setUserFoodBarCode] = useState("");
-    const [userFoodQty, setUserFoodQty] = useState(0);
-    const [userFoodIsOpened, setUserFoodIsOpened] = useState(false);
-  */
     const [food, setFood] = useState(new Food());
+
+    const [resetDateInput, setResetDateInput] = useState(false);
 
     const handleChange = (key, value) => {
         setFood(prev => new Food(
@@ -34,25 +26,30 @@ const AddFood = () => {
             key === "foodQty" ? parseInt(value) : prev.foodQty,
             key === "foodIsOpened" ? value : prev.foodIsOpened
         ));
+
+        console.log("dans handle change : ", value);
     };
 
     const addFood = async () => {
       const newFoodData = {
         food_name: food.foodName,
         food_brand: food.foodBrand,
-        food_registered_date: food.foodRegisteredDate.toISOString().split('T')[0],
-        food_opening_date: food.foodOpeningDate ? food.foodOpeningDate.toISOString().split('T')[0] : null,
-        food_expiration_date: food.foodExpirationDate.toISOString().split('T')[0],
+        food_registered_date: food.foodRegisteredDate ? food.foodRegisteredDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        food_opening_date: food.foodRegisteredDate ? food.foodRegisteredDate : new Date().toISOString().split('T')[0],
+        food_expiration_date: food.foodExpirationDate,
         food_bar_code: food.foodBarCode,
         food_qty: food.foodQty,
         food_is_opened: food.foodIsOpened,
       };
-
+      console.log("test date : ", newFoodData.food_expiration_date);
+      console.log("Date enregistrée : ", food.foodExpirationDate);
       const {data, error} = await supabase
       .from("all_food_table")
       .insert([newFoodData])
       .select() 
       .single();
+      
+      //console.log("Test sur l'insertion : ", data);
 
       if(error){
         console.log("Probleme d'ajout : ", error);
@@ -60,6 +57,8 @@ const AddFood = () => {
         // setFoodList((prev) => [...prev, data]);
         console.log("Ajoute !")
         setFood(new Food());
+        setResetDateInput(true); // 👈 réinitialise DateComponent
+          setTimeout(() => setResetDateInput(false), 100);
       }
     };
 
@@ -75,6 +74,15 @@ const AddFood = () => {
                 value={food.foodBrand}
                 onChangeText={(text) => handleChange("foodBrand", text)}
             />
+            <RecommandedDate 
+            
+            />
+            <DateComponent 
+            onChange={(date) => {
+              console.log("Bah oui encroe : ", date);
+              handleChange("foodExpirationDate", date)
+              reset={resetDateInput}
+            }}/>
             <TextInput
                 placeholder="Code barre"
                 value={food.foodBarCode}
