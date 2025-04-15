@@ -4,7 +4,7 @@ import { Animated, View, Text, StyleSheet, Dimensions } from 'react-native';
 const AnimatedFlatList = Animated.FlatList;
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const MyAnimatedList = ({ foodList }) => {
+const AnimatedFoodList = ({ foodList }) => {
     const scrollY = useRef(new Animated.Value(0)).current;
   
     return (
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
     }
 });
   
-export default MyAnimatedList;
+export default AnimatedFoodList;

@@ -12,14 +12,15 @@ class Food
                 foodIsOpened = true,
                 foodLocation = 1
             ) {
-                        this.foodId = foodId;
+                this.foodId = foodId;
                 this.foodName = foodName;
                 this.foodBrand = foodBrand;
                 this.foodRegistedDate = foodRegistedDate;
-                        this.foodOpeningDate = foodOpeningDate || foodRegistedDate;
-                        this.foodExpirationDate = foodExpirationDate
-                        ? foodExpirationDate : new Date(new Date(foodRegistedDate).setDate(new Date(foodRegistedDate).getDate() + 1)).toISOString().split('T')[0];
-                        this.foodBarCode = foodBarCode;
+                this.foodOpeningDate = foodOpeningDate || foodRegistedDate;
+                this.foodExpirationDate = foodExpirationDate ? 
+                        foodExpirationDate : 
+                        new Date(new Date(foodRegistedDate).setDate(new Date(foodRegistedDate).getDate() + 1)).toISOString().split('T')[0];
+                this.foodBarCode = foodBarCode;
                 this.foodQty = foodQty;
                 this.foodIsOpened = foodIsOpened;
                 this.foodLocation = foodLocation;
@@ -108,7 +109,7 @@ class Food
         getFoodIcon() {
                 const name = this.foodName.toLowerCase();
 
-                if (name.includes("poulet")) return 'drumstick-bite';
+                //if (name.includes("poulet")) return 'drumstick-bite';
                 if (name.includes("lait") || name.includes("crème")) return 'glass';
                 if (name.includes("boeuf") || name.includes("steak")) return 'cutlery';
                 if (name.includes("yaourt") || name.includes("yop")) return 'glass';
@@ -117,7 +118,6 @@ class Food
                 //if (name.includes("fromage")) return "🧀";
                 //if (name.includes("poisson") || name.includes("saumon")) return 'fish-cooked';
                 //if (name.includes("dessert") || name.includes("sucré")) return "🍰";
-
                 return 'shopping-basket';
         }
 

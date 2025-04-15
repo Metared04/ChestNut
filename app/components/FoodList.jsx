@@ -72,7 +72,7 @@ const FoodList = ({ renderItem }) => {
         console.log("c'est vide.");
         return <Text>Il n'y a pas encore d'aliment.</Text>
     } else {
-        //console.log("Tout va bien.")
+        //Tout va bien.
     }
 
 

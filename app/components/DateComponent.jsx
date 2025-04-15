@@ -54,7 +54,7 @@ function DateComponent({ onChange, reset }) {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#e8ecf4' }}>
         <View /*style={styles.container}*/>
             <View /*style={styles.header}*/>
-                <Text style={styles.title}>Date de peremption :</Text>
+                
             </View>
             <View /*style={styles.form}*/>
                 <View /*style={styles.input}*/>
@@ -101,11 +101,7 @@ export default DateComponent;
 const styles = StyleSheet.create({
     
   container: {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    paddingHorizontal: 24,
-    paddingBottom: 16,
+    marginBottom: 20,
   },
   title: {
     fontSize: 15,

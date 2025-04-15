@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import FoodList from '../components/FoodList';
+import AnimatedFoodList from '../components/AnimatedFoodList';
 
 function AllFoodScreen (){
     const renderFoodItem = ({ item, deleteFood }) => (
