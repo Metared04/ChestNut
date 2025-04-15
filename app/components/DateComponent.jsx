@@ -51,13 +51,10 @@ function DateComponent({ onChange, reset }) {
     };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#e8ecf4' }}>
-        <View /*style={styles.container}*/>
-            <View /*style={styles.header}*/>
-                
-            </View>
-            <View /*style={styles.form}*/>
-                <View /*style={styles.input}*/>
+    <SafeAreaView style={styles.container}>
+        <View>
+            <View>
+                <View style={styles.inputContainer}>
                     <TextInput
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -100,45 +97,13 @@ export default DateComponent;
 
 const styles = StyleSheet.create({
     
-  container: {
+  container: { 
     marginBottom: 20,
   },
-  title: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#8027d6',
-    marginBottom: 6,
-  },/*
-  subtitle: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#929292',
-  },
-  form: {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    marginTop: 24,
-  },*/
-  /** Header */
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  headerBack: {
-    padding: 8,
-    paddingTop: 0,
-    position: 'relative',
-    marginLeft: -16,
-  },
-  /** Input */
-  input: {
-    marginBottom: 16,
+  inputContainer: { 
     position: 'relative',
   },
-  inputControl: {
+  inputControl: { 
     height: 50,
     backgroundColor: 'transparent',
     paddingHorizontal: 16,
@@ -151,7 +116,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     zIndex: 2,
   },
-  inputOverflow: {
+  inputOverflow: { 
     backgroundColor: '#edeced',
     borderRadius: 12,
     zIndex: 1,
@@ -165,7 +130,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 16,
   },
-  inputChar: {
+  inputChar: { 
     flexGrow: 1,
     flexShrink: 1,
     flexBasis: 0,
@@ -175,27 +140,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#8027d6'
   },
-  inputCharEmpty: {
+  inputCharEmpty: { 
     color: '#e7b7ff',
     fontWeight: '400',
-  },
-  /** Button */
-  btn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    backgroundColor: '#075eec',
-    borderColor: '#075eec',
-  },
-  btnText: {
-    fontSize: 18,
-    lineHeight: 26,
-    fontWeight: '600',
-    color: '#fff',
   },
 });
 
