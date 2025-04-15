@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Text, View, TextInput, Button, ActivityIndicator, FlatList } from "react-native";
 
-import { supabase } from '../services/supabase';
+import supabase from '../services/supabase';
 import DateComponent from './DateComponent';
 import RecommandedDate from './RecommandedDate';
 
@@ -57,7 +57,7 @@ const AddFood = () => {
         // setFoodList((prev) => [...prev, data]);
         console.log("Ajoute !")
         setFood(new Food());
-        setResetDateInput(true); // 👈 réinitialise DateComponent
+        setResetDateInput(true); 
           setTimeout(() => setResetDateInput(false), 100);
       }
     };

@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import supabase from './supabase';
 
 const fetchFoods = async () => {
     return await supabase.from("all_food_table").select("*");

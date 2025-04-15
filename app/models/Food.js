@@ -2,14 +2,15 @@ class Food
 {
         constructor(
                 foodId = Math.floor(Math.random() * 501) + 500,
-                        foodName = "",
+                foodName = "",
                 foodBrand = "",
                 foodRegistedDate = (new Date()).toISOString().split('T')[0],
                 foodOpeningDate = null,
                 foodExpirationDate = null,
                 foodBarCode = "",
                 foodQty = 1,
-                foodIsOpened = true
+                foodIsOpened = true,
+                foodLocation = 1
             ) {
                         this.foodId = foodId;
                 this.foodName = foodName;
@@ -21,6 +22,7 @@ class Food
                         this.foodBarCode = foodBarCode;
                 this.foodQty = foodQty;
                 this.foodIsOpened = foodIsOpened;
+                this.foodLocation = foodLocation;
                 }
 
         getFoodName() {
@@ -29,6 +31,10 @@ class Food
 
         getFoodIsOpened(){
                 return this.foodIsOpened;
+        }
+
+        getFoodLocation(){
+                return this.foodLocation;
         }
 
         setRegisteredDate(date) {
@@ -47,6 +53,10 @@ class Food
                 this.foodIsOpened = state;
         }
 
+        setFoodLocation(location){
+                this.foodLocation = location;
+        }
+
         foodOpened(){
                 if(!this.foodIsOpened){
                         this.setFoodIsOpened(true);
@@ -56,14 +66,8 @@ class Food
 
         getNumberOfValidityDays(){
                 const today = new Date();
-                if(this.foodIsOpened === true && this.foodOpeningDate !== null){
-                        const startDate = this.foodOpeningDate;
-                        const nbOfValidityDays = this.foodExpirationDate - today;
-                        //console.log("Trouve !")
-                return Math.round((nbOfValidityDays) / (1000 * 60 * 60 * 24)) + 1;
-                }
-                const startDate = this.foodRegisteredDate;
-                const nbOfValidityDays = this.foodExpirationDate - today;
+                const endDate = new Date(this.foodExpirationDate);
+                const nbOfValidityDays = endDate - today;
 
                 return Math.round((nbOfValidityDays) / (1000 * 60 * 60 * 24)) + 1;
         }

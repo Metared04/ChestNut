@@ -54,7 +54,7 @@ function DateComponent({ onChange, reset }) {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#e8ecf4' }}>
         <View /*style={styles.container}*/>
             <View /*style={styles.header}*/>
-                <Text>Date de peremption :</Text>
+                <Text style={styles.title}>Date de peremption :</Text>
             </View>
             <View /*style={styles.form}*/>
                 <View /*style={styles.input}*/>
@@ -99,7 +99,7 @@ function DateComponent({ onChange, reset }) {
 export default DateComponent;
 
 const styles = StyleSheet.create({
-    /*
+    
   container: {
     flexGrow: 1,
     flexShrink: 1,
@@ -108,11 +108,11 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    fontSize: 31,
+    fontSize: 15,
     fontWeight: '700',
-    color: '#1D2A32',
+    color: '#8027d6',
     marginBottom: 6,
-  },
+  },/*
   subtitle: {
     fontSize: 15,
     fontWeight: '500',
@@ -151,12 +151,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'transparent',
     borderWidth: 1,
-    borderColor: '#C9D3DB',
+    borderColor: '#d17af6',
     borderStyle: 'solid',
     zIndex: 2,
   },
   inputOverflow: {
-    backgroundColor: '#fff',
+    backgroundColor: '#edeced',
     borderRadius: 12,
     zIndex: 1,
     position: 'absolute',
@@ -177,9 +177,10 @@ const styles = StyleSheet.create({
     fontSize: 28,
     textAlign: 'center',
     fontWeight: '600',
+    color: '#8027d6'
   },
   inputCharEmpty: {
-    color: '#BBB9BC',
+    color: '#e7b7ff',
     fontWeight: '400',
   },
   /** Button */
