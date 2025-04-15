@@ -1,6 +1,6 @@
 import { Text, View, SafeAreaView, StatusBar as RNStatusBar, Animated } from "react-native";
 import { useEffect, useState, useRef } from 'react';
-import { supabase } from "../services/supabase";
+import supabase from '../services/supabase';
 import Container from "../components/Container";
 import Header from "../components/Header";
 import ItemList from "../components/Item";
