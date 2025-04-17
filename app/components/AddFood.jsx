@@ -24,12 +24,11 @@ const AddFood = () => {
             key === "foodName" ? value : prev.foodName,
             key === "foodBrand" ? value : prev.foodBrand,
             key === "foodRegisteredDate" ? value : prev.foodRegisteredDate,
-            key === "foodOpeningDate" ? value : prev.foodOpeningDate,
             key === "foodExpirationDate" ? value : prev.foodExpirationDate,
             key === "foodBarCode" ? value : prev.foodBarCode,
             key === "foodQty" ? parseInt(value) : prev.foodQty,
-            key === "foodIsOpened" ? value : prev.foodIsOpened,
-            key === "foodLocation" ? value : prev.foodLocation
+            //key === "foodIsOpened" ? value : prev.foodIsOpened,
+            key === "foodFurnitureStoredId" ? value : prev.foodFurnitureStoredId
         ));
 
         console.log("dans handle change : ", value);
@@ -40,12 +39,12 @@ const AddFood = () => {
             food_name: food.foodName,
             food_brand: food.foodBrand,
             food_registered_date: food.foodRegisteredDate ? food.foodRegisteredDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-            food_opening_date: food.foodRegisteredDate ? food.foodRegisteredDate : new Date().toISOString().split('T')[0],
+            //food_opening_date: food.foodRegisteredDate ? food.foodRegisteredDate : new Date().toISOString().split('T')[0],
             food_expiration_date: food.foodExpirationDate,
             food_bar_code: food.foodBarCode,
             food_qty: food.foodQty,
-            food_is_opened: food.foodIsOpened,
-            food_storage_location_id: food.foodLocation,
+            //food_is_opened: food.foodIsOpened,
+            food_furniture_stored_id: food.foodFurnitureStoredId,
         };
         console.log("test date : ", newFoodData.food_expiration_date);
         console.log("Date enregistrée : ", food.foodExpirationDate);
@@ -88,22 +87,22 @@ const AddFood = () => {
                 style={styles.input}
                 onChangeText={(text) => handleChange("foodBrand", text)}
             />
-            <Text style={styles.label}>Ouvert ?</Text>
+            <Text style={styles.label}>Stocké où ?</Text>
             <View style={styles.radioGroup}>
                 <TouchableOpacity onPress={() => handleChange("foodIsOpened", true)} style={styles.radioButton}>
                     <View style={[styles.outerCircle, food.foodIsOpened && styles.selected]}>
                         {food.foodIsOpened && <View style={styles.innerCircle} />}
                     </View>
-                <Text>Oui</Text>
+                <Text>Frigo</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleChange("foodIsOpened", false)} style={styles.radioButton}>
                     <View style={[styles.outerCircle, !food.foodIsOpened && styles.selected]}>
-                    {!food.foodIsOpened && <View style={styles.innerCircle} />}
+                        {!food.foodIsOpened && <View style={styles.innerCircle} />}
                     </View>
-                    <Text>No</Text>
+                    <Text>Congelo</Text>
                 </TouchableOpacity>
             </View>
-            <Text style={styles.label}>Date de mise en frigo / congelo</Text>
+            <Text style={styles.label}>Date de rangement</Text>
             <DateComponent
                 onChange={(date) => handleChange("foodRegisteredDate", date)}
                 reset={resetDateInput}

@@ -1,19 +1,20 @@
 import { Text, View, SafeAreaView, StatusBar as RNStatusBar, Animated } from "react-native";
 import { useEffect, useState, useRef } from 'react';
-import supabase from '../services/supabase';
 import Container from "../components/Container";
 import Header from "../components/Header";
 import ItemList from "../components/Item";
 import Toggle from "../components/Toggle";
-import Food from "../models/Food";
 import { StatusBar } from "expo-status-bar";
 
-function HomeScreen() {
+import allService from "../services/allService";
+import buildUserFromData from "../builders/buildUserFromData";
+
+function HomeScreen({ userId = 1 }) {
     const [selected, setSelected] = useState(null);
     const [isFridge, setIsFridge] = useState(true);
     const [expiringFoods, setExpiringFoods] = useState([]);
     const slideAnim = useRef(new Animated.Value(0)).current;
-    
+
     const toggleFridgeFreezer = () => {
         Animated.timing(slideAnim, {
           toValue: isFridge ? 1 : 0,
@@ -24,39 +25,39 @@ function HomeScreen() {
     };
 
     const fetchExpiringFoods = async () => {
-        const { data, error } = await supabase.from("all_food_table").select("*");
-    
-        if (error) {
-          console.error("Erreur de fetch des aliments :", error);
-          return;
-        }
-    
-        const foodInstances = data.map(
-          (food) =>
-            new Food(
-              food.food_id,
-              food.food_name,
-              food.food_brand,
-              food.food_registered_date,
-              food.food_opening_date,
-              food.food_expiration_date,
-              food.food_bar_code,
-              food.food_qty,
-              food.food_is_opened
-            )
-        );
-        
-        const sortedFoodInstances = foodInstances.sort((a, b) => {
-          return new Date(a.foodExpirationDate) - new Date(b.foodExpirationDate);
-        });
+        try {
+            const rawData = await allService.fetchAllUsersData(userId);
+            //console.log("la reponse : ", rawData); 
+            const user = buildUserFromData(rawData);
+            
+            const allFoods = user.getAllFoods();
+            //console.log("=> ", allFoods);
+            
+            // On trie les aliments par date de péremption, ceux qui arrivent à échéance en premier
+            const now = new Date();
+            const sortedFoods = allFoods.sort((a, b) => {
+                const aDate = new Date(a.foodExpirationDate);
+                const bDate = new Date(b.foodExpirationDate);
+            
+                // Les aliments expirés ou proches de l’être passent en premier
+                const aIsExpiringSoon = aDate <= now;
+                const bIsExpiringSoon = bDate <= now;
+            
+                if (aIsExpiringSoon && !bIsExpiringSoon) return -1;
+                if (!aIsExpiringSoon && bIsExpiringSoon) return 1;
+            
+                // Sinon tri classique par date de péremption croissante
+                return aDate - bDate;
+            });
+            
+            const limitedFoods = sortedFoods.slice(0, 4);
+            setExpiringFoods(limitedFoods);
 
-        // Limiter à 4 produits
-        const limitedFoodInstances = sortedFoodInstances.slice(0, 4);
-        setExpiringFoods(limitedFoodInstances);
-        
-        // Sélectionner le premier élément par défaut
-        if (limitedFoodInstances.length > 0 && !selected) {
-            setSelected(limitedFoodInstances[0].foodId);
+            if (limitedFoods.length > 0 && !selected) {
+                setSelected(limitedFoods[0].foodId);
+            }
+        } catch (error) {
+            console.error("Erreur chargement aliments expirants :", error);
         }
     };
 
@@ -79,9 +80,5 @@ function HomeScreen() {
         </SafeAreaView>
     );
 }
-// Mettre que les 4 premiers ligne par ligne
-// Mettre 
-// Peut etre essayer de faire une moyenne basse de duree de conso
-// Preremplir le champ date de peremption avec ca 
 
 export default HomeScreen;

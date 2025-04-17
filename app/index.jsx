@@ -3,9 +3,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { StrictMode } from "react";
 
 import ManageFoodScreen from './screens/ManageFoodScreen';
-import AllFoodScreen from './screens/AllFoodScreen';
 import AddFoodScreen from './screens/AddFoodScreen';
 import HomeScreen from './screens/HomeScreen';
+import AllHouseScreen from './screens/AllHouseScreen';
+import AllFurnitureScreen from './screens/AllFurnitureScreen';
+import AllFoodScreen from './screens/AllFoodScreen';
+import AllElementScreen from './screens/AddFoodScreen copy';
 import ScanBarCodeCamera from './ScanBarCodeCamera';
 import { View } from 'react-native';
 
@@ -21,7 +24,7 @@ export default function App() {
 </Stack.Navigator>
 */
       <StrictMode>
-              <AddFoodScreen/>
+              <HomeScreen/>
       </StrictMode>
   );
 }

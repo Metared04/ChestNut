@@ -67,7 +67,7 @@ const ItemList = ({ items, selected, setSelected }) => (
             {item.foodName}
           </ItemName>
           <DaysLeft selected={item.foodId === selected}>
-            {item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()} jour(s)
+            {item.foodDayLeft() < 0 ? 0 : item.foodDayLeft()} jour(s)
           </DaysLeft>
         </ItemContent>
         

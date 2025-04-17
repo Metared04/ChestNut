@@ -3,38 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import FoodList from '../components/FoodList';
 import AnimatedFoodList from '../components/AnimatedFoodList';
+import ShowFood from '../components/ShowFood';
 
 function AllFoodScreen (){
-    const renderFoodItem = ({ item, deleteFood }) => (
-        <View style={styles.card}>
-            <View style={styles.left}>
-                <MaterialCommunityIcons
-                    name={item.foodLocation === 1 ? "fridge-outline" : "snowflake"}
-                    size={24}
-                    color="#a855f7"
-                    style={{ marginRight: 10 }}
-                />
-                <Text style={styles.name}>{item.foodName}</Text>
-            </View>
-            <View style={styles.right}>
-                <Text style={styles.days}>{Math.max(item.getNumberOfValidityDays(), 0)} days left</Text>
-                <TouchableOpacity onPress={() => deleteFood(item.foodId)}>
-                    <FontAwesome name="trash" size={18} color="#f87171" />
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
+    const id = 1;
     return (
-        <View style={{ flex: 1 }}>
-            <View style={styles.header}>
-                <TouchableOpacity >
-                    <Ionicons name="chevron-back" size={28} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.title}>Chest Nut</Text>
-            </View>
-            <View style={styles.container}>
-                <FoodList renderItem={renderFoodItem} />
-            </View>
+        <View>
+            <ShowFood furnitureId={id}/>
         </View>
     );
 };
@@ -86,3 +61,38 @@ const styles = StyleSheet.create({
 });
 
 export default AllFoodScreen;
+
+/*
+const renderFoodItem = ({ item, deleteFood }) => (
+        <View style={styles.card}>
+            <View style={styles.left}>
+                <MaterialCommunityIcons
+                    name={item.foodLocation === 1 ? "fridge-outline" : "snowflake"}
+                    size={24}
+                    color="#a855f7"
+                    style={{ marginRight: 10 }}
+                />
+                <Text style={styles.name}>{item.foodName}</Text>
+            </View>
+            <View style={styles.right}>
+                <Text style={styles.days}>{Math.max(item.foodDayLeft(), 0)} days left</Text>
+                <TouchableOpacity onPress={() => deleteFood(item.foodId)}>
+                    <FontAwesome name="trash" size={18} color="#f87171" />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+    return (
+        <View style={{ flex: 1 }}>
+            <View style={styles.header}>
+                <TouchableOpacity >
+                    <Ionicons name="chevron-back" size={28} color="black" />
+                </TouchableOpacity>
+                <Text style={styles.title}>Chest Nut</Text>
+            </View>
+            <View style={styles.container}>
+                <FoodList renderItem={renderFoodItem} />
+            </View>
+        </View>
+    );
+*/

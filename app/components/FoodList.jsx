@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, ActivityIndicator } from "react-native";
 import supabase from '../services/supabase';
 import Food from '../models/Food';
-import foodService from "../services/foodService";
+import allService from "../services/allService";
 
 const FoodList = ({ renderItem }) => {
     const [foodList, setFoodList] = useState([]);
@@ -55,7 +55,7 @@ const FoodList = ({ renderItem }) => {
     }, []);
     
     const deleteFood = async (foodId) => {
-        const { error } = await foodService.deleteFood(foodId);
+        const { error } = await allService.deleteFood(foodId);
     
         if (error) {
             console.log("Erreur dans la suppression :", error);
@@ -77,7 +77,7 @@ const FoodList = ({ renderItem }) => {
 
 
     const toggleFoodState = async (foodId, location) => {
-        const { error } = await foodService.updatedFoodState(foodId, location);
+        const { error } = await allService.updatedFoodState(foodId, location);
         if (!error) {
             const updatedList = foodList.map(food =>
                 food.foodId === foodId ? { ...food, foodLocation: !location } : food
@@ -154,7 +154,7 @@ const statStyles = StyleSheet.create({
 });
 
 const openingFood = async (foodId, isOpened) => {
-        const { error } = await foodService.updatedFoodState(foodId, isOpened);
+        const { error } = await allService.updatedFoodState(foodId, isOpened);
         if (error) {
             console.log("Erreur dans la modification :", error);
         } else {

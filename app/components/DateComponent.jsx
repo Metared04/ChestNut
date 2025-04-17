@@ -85,6 +85,9 @@ function DateComponent({ onChange, reset }) {
                             </Text>
                             );
                         })}
+                        <View style={styles.inputIcon}>
+  <FeatherIcon name="calendar" size={20} color="#8027d6" />
+</View>
                      </View>
                 </View>
             </View>

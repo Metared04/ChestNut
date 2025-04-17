@@ -1,30 +1,34 @@
 class Food
 {
         constructor(
-                foodId = Math.floor(Math.random() * 501) + 500,
-                foodName = "",
+                foodId,
+                foodName = "Inconnu",
                 foodBrand = "",
-                foodRegistedDate = (new Date()).toISOString().split('T')[0],
-                foodOpeningDate = null,
-                foodExpirationDate = null,
+                foodRegisteredDate = (new Date()).toISOString().split('T')[0],
+                //foodOpeningDate = null,
+                foodExpirationDate = (new Date(Date.now() + 86400000)).toISOString().split('T')[0],
                 foodBarCode = "",
                 foodQty = 1,
-                foodIsOpened = true,
-                foodLocation = 1
+                //foodIsOpened = true,
+                foodFurnitureStoredId = 1
             ) {
                 this.foodId = foodId;
                 this.foodName = foodName;
                 this.foodBrand = foodBrand;
-                this.foodRegistedDate = foodRegistedDate;
-                this.foodOpeningDate = foodOpeningDate || foodRegistedDate;
+                this.foodRegisteredDate = foodRegisteredDate;
+                //this.foodOpeningDate = foodOpeningDate || foodRegisteredDate;
                 this.foodExpirationDate = foodExpirationDate ? 
                         foodExpirationDate : 
-                        new Date(new Date(foodRegistedDate).setDate(new Date(foodRegistedDate).getDate() + 1)).toISOString().split('T')[0];
+                        new Date(new Date(foodRegisteredDate).setDate(new Date(foodRegisteredDate).getDate() + 1)).toISOString().split('T')[0];
                 this.foodBarCode = foodBarCode;
                 this.foodQty = foodQty;
-                this.foodIsOpened = foodIsOpened;
-                this.foodLocation = foodLocation;
+                //this.foodIsOpened = foodIsOpened;
+                this.foodFurnitureStoredId = foodFurnitureStoredId;
                 }
+
+        getFoodId(){
+                return this.foodId;
+        }
 
         getFoodName() {
                 return this.foodName;
@@ -34,8 +38,8 @@ class Food
                 return this.foodIsOpened;
         }
 
-        getFoodLocation(){
-                return this.foodLocation;
+        getFoodFurnitureStoredId(){
+                return this.foodFurnitureStoredId;
         }
 
         setRegisteredDate(date) {
@@ -54,8 +58,8 @@ class Food
                 this.foodIsOpened = state;
         }
 
-        setFoodLocation(location){
-                this.foodLocation = location;
+        setFoodFurnitureStoredId(location){
+                this.foodFurnitureStoredId = location;
         }
 
         foodOpened(){
@@ -65,7 +69,7 @@ class Food
                 }
         }
 
-        getNumberOfValidityDays(){
+        foodDayLeft(){
                 const today = new Date();
                 const endDate = new Date(this.foodExpirationDate);
                 const nbOfValidityDays = endDate - today;
@@ -74,11 +78,11 @@ class Food
         }
 
         foodIsAlmostExpired(){
-                return this.getNumberOfValidityDays() <= 3 && this.getNumberOfValidityDays() > 0;
+                return this.foodDayLeft() <= 3 && this.foodDayLeft() > 0;
         }
 
         foodIsExpired(){
-                return this.getNumberOfValidityDays() <= 0;
+                return this.foodDayLeft() <= 0;
         }
 
         getExpirationStatus(){
@@ -86,10 +90,10 @@ class Food
                 // console.log("Le produit ", this.foodName, " est PÉRIMÉ");
                 return 0;
         } else if (this.foodIsAlmostExpired()) {
-            // console.log("Le produit ", this.foodName, " expire bientôt !", this.getNumberOfValidityDays(), "jours restants)");
+            // console.log("Le produit ", this.foodName, " expire bientôt !", this.foodDayLeft(), "jours restants)");
                 return 1;
         } else {
-                // console.log("Le produit ", this.foodName, " est encore bon pour", this.getNumberOfValidityDays(), "jours.");
+                // console.log("Le produit ", this.foodName, " est encore bon pour", this.foodDayLeft(), "jours.");
                 return 2;
                 }
         }
@@ -98,26 +102,22 @@ class Food
                 if (this.getExpirationStatus() == 0){
                         return "Le produit " + this.foodName + " est PÉRIMÉ";
                 } else if (this.getExpirationStatus() == 1){
-                        return "Le produit " + this.foodName + " expire bientôt ! " + this.getNumberOfValidityDays() + " jours restants";
+                        return "Le produit " + this.foodName + " expire bientôt ! " + this.foodDayLeft() + " jours restants";
                 } else if (this.getExpirationStatus() == 2){
-                        return "Le produit " + this.foodName + " est encore bon pour " + Math.round(this.getNumberOfValidityDays()) + " jours.";
+                        return "Le produit " + this.foodName + " est encore bon pour " + Math.round(this.foodDayLeft()) + " jours.";
                 } else {
                         return "Probleme de reconnaissance du produit";
                 }
         }
 
         getFoodIcon() {
-                const name = this.foodName.toLowerCase();
+                //const name = this.foodName.toLowerCase();
 
-                //if (name.includes("poulet")) return 'drumstick-bite';
                 if (name.includes("lait") || name.includes("crème")) return 'glass';
                 if (name.includes("boeuf") || name.includes("steak")) return 'cutlery';
                 if (name.includes("yaourt") || name.includes("yop")) return 'glass';
                 if (name.includes("pâtes") || name.includes("bolognaise")) return 'cutlery';
-                //if (name.includes("bacon")) return 'bacon';
-                //if (name.includes("fromage")) return "🧀";
-                //if (name.includes("poisson") || name.includes("saumon")) return 'fish-cooked';
-                //if (name.includes("dessert") || name.includes("sucré")) return "🍰";
+
                 return 'shopping-basket';
         }
 
@@ -264,3 +264,20 @@ const shelfLifeMap = {
 };
 
 export default Food
+
+/*
+getFoodIcon() {
+                const name = this.foodName.toLowerCase();
+
+                //if (name.includes("poulet")) return 'drumstick-bite';
+                if (name.includes("lait") || name.includes("crème")) return 'glass';
+                if (name.includes("boeuf") || name.includes("steak")) return 'cutlery';
+                if (name.includes("yaourt") || name.includes("yop")) return 'glass';
+                if (name.includes("pâtes") || name.includes("bolognaise")) return 'cutlery';
+                //if (name.includes("bacon")) return 'bacon';
+                //if (name.includes("fromage")) return "🧀";
+                //if (name.includes("poisson") || name.includes("saumon")) return 'fish-cooked';
+                //if (name.includes("dessert") || name.includes("sucré")) return "🍰";
+                return 'shopping-basket';
+        }
+*/
