@@ -55,7 +55,7 @@ const SubHeaderText = styled.Text`
   font-weight: 600;
 `;
 
-const Header = () => (
+const Header = ({item}) => (
   <>
     <HeaderContainer>
       <MenuButton>
@@ -64,7 +64,7 @@ const Header = () => (
       
       <WelcomeContainer>
         <HeaderText>Bienvenue</HeaderText>
-        <UserName>John Smith</UserName>
+        <UserName>{item ? item : "Inconnue au bataillon"}</UserName>
       </WelcomeContainer>
       
       <SettingsButton>

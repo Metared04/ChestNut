@@ -10,7 +10,7 @@ const ShowHousesAndFurnitures = ({ userId/*, navigation*/ }) => {
 
     useEffect(() => {
         const loadHousesAndFurnitures = async () => {
-            const housesData = await allService.fetchUserHousesWithFurniture(userId);
+            const housesData = await allService.fetchUserHousesWithFurnitureAndFoods(userId);
             setHouses(housesData);
             //console.log("donnees : ", housesData);
         };
@@ -48,7 +48,9 @@ const ShowHousesAndFurnitures = ({ userId/*, navigation*/ }) => {
                     <View key={furniture.user_furniture_id} style={styles.iconText}>
                         {renderFurnitureIcon(furniture.user_furniture_type_id)}
                         <Text style={styles.furnitureName}>{furniture.user_furniture_name}</Text>
-                        <Text style={styles.furnitureArticlesNumber}>{item.all_user_furniture_table.length} article(s)</Text>
+                        <Text style={styles.furnitureArticlesNumber}>
+                            {furniture.food_table?.length ?? 0} article(s)
+                        </Text>
                     </View>
                 ))
             ) : (

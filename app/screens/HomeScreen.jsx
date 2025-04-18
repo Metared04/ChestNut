@@ -19,6 +19,7 @@ function HomeScreen({ userId = 1 }) {
     const [selected, setSelected] = useState(null);
     const [isFridge, setIsFridge] = useState(true);
     const [expiringFoods, setExpiringFoods] = useState([]);
+    const [userNick, setUserNick] = useState("Inconnue au bataillon");
     const slideAnim = useRef(new Animated.Value(0)).current;
     
     const toggleFridgeFreezer = () => {
@@ -33,6 +34,8 @@ function HomeScreen({ userId = 1 }) {
     const fetchExpiringFoods = async () => {
         try {
             const rawData = await allService.fetchAllUsersData(userId);
+            console.log("donnee brut : ",rawData.user_name);
+            setUserNick(rawData.user_name);
             const user = buildUserFromData(rawData);
             const allFoods = user.getAllFoods();            
             
@@ -70,7 +73,7 @@ function HomeScreen({ userId = 1 }) {
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <RNStatusBar barStyle="dark-content" />
             <Container>
-                <Header />
+                <Header item={userNick}/>
                 {expiringFoods.length === 0 ? (
                     <Text>Vous n'avez pas d'aliments encore :(</Text>
                 ) : (
