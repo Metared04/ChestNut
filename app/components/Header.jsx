@@ -63,7 +63,7 @@ const Header = () => (
       </MenuButton>
       
       <WelcomeContainer>
-        <HeaderText>Welcome</HeaderText>
+        <HeaderText>Bienvenue</HeaderText>
         <UserName>John Smith</UserName>
       </WelcomeContainer>
       

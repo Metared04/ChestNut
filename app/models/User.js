@@ -60,6 +60,17 @@ class User {
 		}
 		return null;
 	}
+
+	findHouseOfFood(targetFood) {
+		for (const house of this.housesList) {
+			for (const furniture of house.furnitureList) {
+				if (furniture.foodList.includes(targetFood)) {
+					return house;
+				}
+		  	}
+		}
+		return null; // Si l'aliment n'est trouvé dans aucune maison
+	}
 }
 
 export default User

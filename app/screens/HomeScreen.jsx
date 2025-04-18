@@ -30,46 +30,26 @@ function HomeScreen({ userId = 1 }) {
     const fetchExpiringFoods = async () => {
         try {
             const rawData = await allService.fetchAllUsersData(userId);
-            //console.log("la reponse : ", rawData); 
             const user = buildUserFromData(rawData);
-            console.log("user : ", user instanceof User);
-            const allFoods = user.getAllFoods();
-            const maybeFood = allFoods[0];
-            const trueFood = new Food(
-                maybeFood.foodId,
-                maybeFood.foodName,
-                maybeFood.foodBrand,
-                maybeFood.foodRegisteredDate,
-                maybeFood.foodExpirationDate,
-                maybeFood.foodBarCode,
-                maybeFood.foodQty,
-                maybeFood.foodFurnitureStoredId
-              );
-            console.log("=> ", allFoods);
-            console.log("===> ", allFoods[0] instanceof Food);
-            console.log("======> ", trueFood instanceof Food)
+            const allFoods = user.getAllFoods();            
             
-            // On trie les aliments par date de péremption, ceux qui arrivent à échéance en premier
             const now = new Date();
             const sortedFoods = allFoods.sort((a, b) => {
                 const aDate = new Date(a.foodExpirationDate);
                 const bDate = new Date(b.foodExpirationDate);
             
-                // Les aliments expirés ou proches de l’être passent en premier
+                
                 const aIsExpiringSoon = aDate <= now;
                 const bIsExpiringSoon = bDate <= now;
             
                 if (aIsExpiringSoon && !bIsExpiringSoon) return -1;
                 if (!aIsExpiringSoon && bIsExpiringSoon) return 1;
             
-                // Sinon tri classique par date de péremption croissante
                 return aDate - bDate;
             });
             
             const limitedFoods = sortedFoods.slice(0, 4);
-            console.log("limitedFoods :", limitedFoods);
             setExpiringFoods(limitedFoods);
-            console.log("liste :", expiringFoods);
 
             if (limitedFoods.length > 0 && !selected) {
                 setSelected(limitedFoods[0].foodId);

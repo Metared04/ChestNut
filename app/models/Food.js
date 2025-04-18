@@ -5,24 +5,20 @@ class Food
                 foodName = "Inconnu",
                 foodBrand = "",
                 foodRegisteredDate = (new Date()).toISOString().split('T')[0],
-                //foodOpeningDate = null,
                 foodExpirationDate = (new Date(Date.now() + 86400000)).toISOString().split('T')[0],
                 foodBarCode = "",
                 foodQty = 1,
-                //foodIsOpened = true,
                 foodFurnitureStoredId = 1
         ) {
                 this.foodId = foodId;
                 this.foodName = foodName;
                 this.foodBrand = foodBrand;
                 this.foodRegisteredDate = foodRegisteredDate;
-                //this.foodOpeningDate = foodOpeningDate || foodRegisteredDate;
                 this.foodExpirationDate = foodExpirationDate ? 
                         foodExpirationDate : 
                         new Date(new Date(foodRegisteredDate).setDate(new Date(foodRegisteredDate).getDate() + 1)).toISOString().split('T')[0];
                 this.foodBarCode = foodBarCode;
                 this.foodQty = foodQty;
-                //this.foodIsOpened = foodIsOpened;
                 this.foodFurnitureStoredId = foodFurnitureStoredId;
         }
 
@@ -113,13 +109,10 @@ class Food
 
         getExpirationStatus(){
         if (this.foodIsExpired()) {
-                // console.log("Le produit ", this.foodName, " est PÉRIMÉ");
                 return 0;
         } else if (this.foodIsAlmostExpired()) {
-            // console.log("Le produit ", this.foodName, " expire bientôt !", this.foodDayLeft(), "jours restants)");
                 return 1;
         } else {
-                // console.log("Le produit ", this.foodName, " est encore bon pour", this.foodDayLeft(), "jours.");
                 return 2;
                 }
         }
