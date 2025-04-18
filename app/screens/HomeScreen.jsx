@@ -6,18 +6,21 @@ import ItemList from "../components/Item";
 import Toggle from "../components/Toggle";
 import { StatusBar } from "expo-status-bar";
 
+import ShowHouse from "../components/ShowHouse";
+
 import allService from "../services/allService";
 import buildUserFromData from "../builders/buildUserFromData";
 
 import Food from "../models/Food";
 import User from "../models/User";
+import ShowHousesAndFurnitures from "../components/ShowHousesAndFurnitures";
 
 function HomeScreen({ userId = 1 }) {
     const [selected, setSelected] = useState(null);
     const [isFridge, setIsFridge] = useState(true);
     const [expiringFoods, setExpiringFoods] = useState([]);
     const slideAnim = useRef(new Animated.Value(0)).current;
-
+    
     const toggleFridgeFreezer = () => {
         Animated.timing(slideAnim, {
           toValue: isFridge ? 1 : 0,
@@ -73,10 +76,15 @@ function HomeScreen({ userId = 1 }) {
                 ) : (
                     <ItemList items={expiringFoods} selected={selected} setSelected={setSelected} />
                 )}
-                <Toggle isFridge={isFridge} slideAnim={slideAnim} toggleFridgeFreezer={toggleFridgeFreezer} />
+                <ShowHousesAndFurnitures userId={userId}/>
+                
             </Container>
         </SafeAreaView>
     );
 }
 
 export default HomeScreen;
+
+/*
+<Toggle isFridge={isFridge} slideAnim={slideAnim} toggleFridgeFreezer={toggleFridgeFreezer} />
+*/

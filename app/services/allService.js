@@ -70,6 +70,31 @@ const getFoodsByFurnitureId = async (furnitureId) => {
     return data;
 };
 
+const fetchUserHousesWithFurniture = async (userId) => {
+    const { data, error } = await supabase
+        .from("user_house_table")
+        .select(`
+            user_house_id,
+            user_house_name,
+            user_house_owner_id,
+            all_user_furniture_table (
+                user_furniture_id,
+                user_furniture_name,
+                user_furniture_type_id,
+                user_id,
+                user_house_id
+            )
+        `)
+        .eq("user_house_owner_id", userId);
+
+    if (error) {
+        console.error("Erreur fetchUserHousesWithFurniture :", error);
+        return [];
+    }
+
+    return data;
+}
+
 const fetchAllUsersData = async (userId) => {
     const { data, error } = await supabase
         .from('users_table')
@@ -118,4 +143,5 @@ export default {
     getAllFoodsByUserId,
     getFoodsByFurnitureId,
     fetchAllUsersData,
+    fetchUserHousesWithFurniture,
 };
