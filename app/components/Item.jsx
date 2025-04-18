@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import { FontAwesome } from '@expo/vector-icons';
+import Food from "../models/Food";
 
 const ItemContainer = styled.View`
   flex-direction: row;

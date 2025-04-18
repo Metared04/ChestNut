@@ -1,35 +1,66 @@
+import Furniture from "./Furniture";
+
 class House {
-  constructor(houseId, houseName, ownerUserId) {
+  	constructor(
+		houseId, 
+		houseName, 
+		houseOwnerUserId, 
+		houseFurnitureList = [], 
+		guestsList = []
+	) {
 		this.houseId = houseId;
 		this.houseName = houseName;
-		this.ownerUserId = ownerUserId;
-		this.furnitureList = [];
-		this.guests = [];
-  }
+		this.houseOwnerUserId = houseOwnerUserId;
+		this.houseFurnitureList = houseFurnitureList;
+		this.guestsList = guestsList;
+  	}
 
-	addFurniture(furniture) {
-		this.furnitureList.push(furniture);
+	getHouseId(){
+		return this.houseId;
 	}
 
-	getFurnitureList() {
-		return this.furnitureList;
+	getHouseName(){
+		return this.houseName;
+	}
+
+	getHouseOwnerUserId(){
+		return this.houseOwnerUserId;
+	}
+
+	getHouseFurnitureList() {
+		return this.houseFurnitureList;
+	}
+
+	getGuestsList() {
+		return this.guestsList;
 	}
 
 	getFurnitureById(id) {
-		return this.furnitureList.find(f => f.inventoryId === id);
+		return this.houseFurnitureList.find(f => f.inventoryId === id);
 	}
 
 	getAllFoodsOnThisHouse() {
-		return this.furnitureList.flatMap(f => f.getInventoryFoodList());
+		return this.houseFurnitureList.flatMap(f => f.getInventoryFoodList());
+	}
+
+	getAllFoodsWithDetails() {
+		return this.houseFurnitureList.flatMap(f => 
+			f.getAllFoodsWithFurnitureInfo().map(food => ({
+				...food,
+				houseId: this.houseId,
+				houseName: this.houseName
+			}))
+		);
+	}
+
+	addFurniture(furniture) {
+		this.houseFurnitureList.push(furniture);
 	}
 
 	addGuest(user) {
 		this.guests.push(user);
 	}
 
-	getGuests() {
-		return this.guests;
-	}
 }
 
 export default House

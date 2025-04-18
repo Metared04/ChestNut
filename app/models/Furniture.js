@@ -2,8 +2,8 @@ import Food from "./Food";
 
 class Furniture {
 	constructor(
-		inventoryId = 1,
-		inventoryName = "Frigo",
+		inventoryId,
+		inventoryName = "Meuble inconnue",
 		inventoryNombreOfElement = 0,
 		inventoryMaxLength = 25,
 		inventoryFoodList = [],
@@ -49,6 +49,15 @@ class Furniture {
 		return this.inventoryType;
 	}
 
+	getAllFoodsWithFurnitureInfo() {
+		return this.inventoryFoodList.map(food => ({
+			...food,
+			furnitureId: this.furnitureId,
+			furnitureName: this.furnitureName,
+			furnitureType: this.furnitureType
+		}));
+	  }
+
 	addFood(food) {
 		if (!(food instanceof Food)) {
 			return "Objet pas de classe Food.";
@@ -78,8 +87,6 @@ class Furniture {
 		}
 		return "Aucun aliment avec cet ID trouvé.";
 	}
-
-	// Méthodes utilitaires supplémentaires
 
 	getFoodById(id) {
 		return this.inventoryFoodList.find(food => food.getFoodId() === id) || null;

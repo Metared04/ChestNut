@@ -9,6 +9,9 @@ import { StatusBar } from "expo-status-bar";
 import allService from "../services/allService";
 import buildUserFromData from "../builders/buildUserFromData";
 
+import Food from "../models/Food";
+import User from "../models/User";
+
 function HomeScreen({ userId = 1 }) {
     const [selected, setSelected] = useState(null);
     const [isFridge, setIsFridge] = useState(true);
@@ -29,9 +32,22 @@ function HomeScreen({ userId = 1 }) {
             const rawData = await allService.fetchAllUsersData(userId);
             //console.log("la reponse : ", rawData); 
             const user = buildUserFromData(rawData);
-            
+            console.log("user : ", user instanceof User);
             const allFoods = user.getAllFoods();
-            //console.log("=> ", allFoods);
+            const maybeFood = allFoods[0];
+            const trueFood = new Food(
+                maybeFood.foodId,
+                maybeFood.foodName,
+                maybeFood.foodBrand,
+                maybeFood.foodRegisteredDate,
+                maybeFood.foodExpirationDate,
+                maybeFood.foodBarCode,
+                maybeFood.foodQty,
+                maybeFood.foodFurnitureStoredId
+              );
+            console.log("=> ", allFoods);
+            console.log("===> ", allFoods[0] instanceof Food);
+            console.log("======> ", trueFood instanceof Food)
             
             // On trie les aliments par date de péremption, ceux qui arrivent à échéance en premier
             const now = new Date();
@@ -51,7 +67,9 @@ function HomeScreen({ userId = 1 }) {
             });
             
             const limitedFoods = sortedFoods.slice(0, 4);
+            console.log("limitedFoods :", limitedFoods);
             setExpiringFoods(limitedFoods);
+            console.log("liste :", expiringFoods);
 
             if (limitedFoods.length > 0 && !selected) {
                 setSelected(limitedFoods[0].foodId);

@@ -11,7 +11,7 @@ class Food
                 foodQty = 1,
                 //foodIsOpened = true,
                 foodFurnitureStoredId = 1
-            ) {
+        ) {
                 this.foodId = foodId;
                 this.foodName = foodName;
                 this.foodBrand = foodBrand;
@@ -24,7 +24,7 @@ class Food
                 this.foodQty = foodQty;
                 //this.foodIsOpened = foodIsOpened;
                 this.foodFurnitureStoredId = foodFurnitureStoredId;
-                }
+        }
 
         getFoodId(){
                 return this.foodId;
@@ -34,24 +34,50 @@ class Food
                 return this.foodName;
         }
 
-        getFoodIsOpened(){
-                return this.foodIsOpened;
+        getFoodBrand(){
+                return this.foodBrand
+        }
+
+        getRegisteredDate(){
+                return this.foodRegisteredDate
+        }
+
+        getExpirationDate(){
+                return this.foodExpirationDate
+        }
+
+        getFoodBarCode(){
+                return this.foodBarCode;
+        }
+
+        getFoodQty(){
+                return this.foodQty;
         }
 
         getFoodFurnitureStoredId(){
                 return this.foodFurnitureStoredId;
         }
 
-        setRegisteredDate(date) {
-                this.foodRegisteredDate = new Date(date);
+        setFoodName(newName){
+                this.foodName = newName;
+        }
+
+        setFoodBrand(newBrand){
+                this.foodBrand = newBrand;
+        }
+
+        setRegisteredDate(newDate) {
+                this.foodRegisteredDate = new Date(newDate);
         }
         
-        setOpeningDate(date) {
-                this.foodOpeningDate = date ? new Date(date) : null;
+        setExpirationDate(newDate) {
+                this.foodExpirationDate = new Date(newDate);
         }
-        
-        setExpirationDate(date) {
-                this.foodExpirationDate = new Date(date);
+
+        setFoodQty(newQty){
+               if(newQty > 0){
+                        this.foodQty = newQty;
+               } 
         }
 
         setFoodIsOpened(state){
@@ -111,7 +137,7 @@ class Food
         }
 
         getFoodIcon() {
-                //const name = this.foodName.toLowerCase();
+                const name = this.foodName.toLowerCase();
 
                 if (name.includes("lait") || name.includes("crème")) return 'glass';
                 if (name.includes("boeuf") || name.includes("steak")) return 'cutlery';
@@ -279,5 +305,14 @@ getFoodIcon() {
                 //if (name.includes("poisson") || name.includes("saumon")) return 'fish-cooked';
                 //if (name.includes("dessert") || name.includes("sucré")) return "🍰";
                 return 'shopping-basket';
+        }
+
+
+        getFoodIsOpened(){
+                return this.foodIsOpened;
+        }
+
+        setOpeningDate(newDate) {
+                this.foodOpeningDate = newDate ? new Date(newDate) : null;
         }
 */

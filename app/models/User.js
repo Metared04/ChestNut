@@ -1,31 +1,64 @@
 import House from "./House";
 
 class User {
-	constructor(userId, userName, userMail, userPasswd, userIsPremium = false) {
+	constructor(userId, userName, userMail, userPasswd, userIsPremium = false, housesList) {
 		this.userId = userId;
 		this.userName = userName;
 		this.userMail = userMail;
 		this.userPasswd = userPasswd;
 		this.userIsPremium = userIsPremium;
-		this.houses = [];
+		this.housesList = [];
+	}
+
+	getUserId(){
+		return this.userId;
+	}
+
+	getUserName(){
+		return this.userName;
+	}
+
+	getUserMail(){
+		return this.userMail;
+	}
+
+	getUserPasswd(){
+		return this.userPasswd;
+	}
+
+	getUserIsPremium(){
+		return this.userIsPremium;
+	}
+
+	getHousesList() {
+		return this.housesList;
 	}
 
 	addHouse(house) {
 		if (house instanceof House) {
-			this.houses.push(house);
+			this.housesList.push(house);
 		}
 	}
 
-	getHouses() {
-		return this.houses;
-	}
-
 	getAllFurniture() {
-		return this.houses.flatMap(house => house.getFurnitureList());
+		return this.housesList.flatMap(house => house.getFurnitureList());
 	}
 
 	getAllFoods() {
-		return this.houses.flatMap(h => h.getAllFoodsOnThisHouse());
+		return this.housesList.flatMap(h => h.getAllFoodsOnThisHouse());
+	}
+
+	getAllFoodsWithDetails() {
+		return this.housesList.flatMap(h => h.getAllFoodsWithDetails());
+	}
+
+	getFurnitureById(id) {
+		for (const house of this.housesList) {
+			for (const furniture of house.furnitureList) {
+				if (furniture.furnitureId === id) return furniture;
+			}
+		}
+		return null;
 	}
 }
 
