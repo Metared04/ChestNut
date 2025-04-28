@@ -6,12 +6,9 @@ import Header from "../components/Header";
 import ItemList from "../components/Item";
 import Toggle from "../components/Toggle";
 import { StatusBar } from "expo-status-bar";
-
 import ShowHouse from "../components/ShowHouse";
-
 import allService from "../services/allService";
 import buildUserFromData from "../builders/buildUserFromData";
-
 import Food from "../models/Food";
 import User from "../models/User";
 import ShowHousesAndFurnitures from "../components/ShowHousesAndFurnitures";
@@ -80,7 +77,7 @@ function HomeScreen({ userId = 1 }) {
                 ) : (
                     <ItemList items={expiringFoods} selected={selected} setSelected={setSelected} />
                 )}
-                <ShowHousesAndFurnitures userId={userId}/>
+                <Toggle userId={userId}/>
                 
             </Container>
         </SafeAreaView>

@@ -28,26 +28,12 @@ const ItemContent = styled.View`
 const ItemName = styled.Text`
   font-size: 16px;
   font-weight: bold;
-  color: ${({ selected }) => (selected ? "white" : "#444")};
   margin-top: 8px;
 `;
 
 const DaysLeft = styled.Text`
   font-size: 14px;
-  color: ${({ selected }) => (selected ? "white" : "#888")};
   margin-top: 4px;
-`;
-
-const CheckCircle = styled.View`
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.3);
-  align-items: center;
-  justify-content: center;
 `;
 
 const ItemList = ({ items, selected, setSelected, onDelete, getFoodIcon }) => {
@@ -81,37 +67,34 @@ const ItemList = ({ items, selected, setSelected, onDelete, getFoodIcon }) => {
     <ItemContainer>
       {items.map((item) => (
         <ItemBox 
-          key={item.food_id} 
-          selected={item.food_id === selected} 
-          onPress={() => setSelected(item.food_id)}
+          key={item.foodId} 
+          selected={item.foodId === selected} 
+          onPress={() => setSelected(item.foodId)}
         >
           <ItemContent>
             <FontAwesome 
               name={item.getFoodIcon()} 
               size={24} 
-              color={item.food_id === selected ? "white" : "#888"} 
+              color={item.foodId === selected ? "white" : "#888"} 
             />
-            <ItemName selected={item.food_id === selected}>
+            <ItemName style={{ color: item.foodId === selected ? 'white' : '#444' }}>
               {item.foodName.length > 25 
                 ? item.foodName.slice(0, 25) + '...' 
                 : item.foodName}
             </ItemName>
-            <DaysLeft selected={item.food_id === selected}>
+            <DaysLeft style={{ color: item.foodId === selected ? 'white' : '#888' }}>
               {item.foodDayLeft() < 0 ? 0 : item.foodDayLeft()} jour(s)
             </DaysLeft>
           </ItemContent>
 
-          {item.food_id === selected && (
+          {item.foodId === selected && (
             <>
-              <CheckCircle>
-                <FontAwesome name="check" size={16} color="white" />
-              </CheckCircle>
 
               <TouchableOpacity
                 style={{
                   position: 'absolute',
-                  top: 15,
-                  left: 15,
+                  bottom: 15,
+                  right: 15,
                   backgroundColor: 'red',
                   padding: 6,
                   borderRadius: 16,
