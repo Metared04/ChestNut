@@ -24,7 +24,7 @@ const AddFood = () => {
 
     const handleChange = (key, value) => {
         setFood(prev => new Food(
-            prev.foodId,
+            prev.food_id,
             key === "foodName" ? value : prev.foodName,
             key === "foodBrand" ? value : prev.foodBrand,
             key === "foodRegisteredDate" ? value : prev.foodRegisteredDate,

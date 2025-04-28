@@ -56,7 +56,7 @@ function HomeScreen() {
         
         // Sélectionner le premier élément par défaut
         if (limitedFoodInstances.length > 0 && !selected) {
-            setSelected(limitedFoodInstances[0].foodId);
+            setSelected(limitedFoodInstances[0].food_id);
         }
     };
 

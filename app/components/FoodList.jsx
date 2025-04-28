@@ -19,7 +19,7 @@ const FoodList = () => {
             } else {
                 const allFoodInstances = data.map(food =>
                     new Food(
-                        food.food_id,  // Vérifie que le modèle Food utilise food_id et pas foodId
+                        food.food_id,  // Vérifie que le modèle Food utilise food_id et pas food_id
                         food.food_name,
                         food.food_brand,
                         food.food_registered_date,
@@ -44,17 +44,17 @@ const FoodList = () => {
         fetchFoods();
     }, []);
 
-    const deleteFood = async (foodId) => {
+    const deleteFood = async (food_id) => {
         const { error } = await supabase
             .from("all_food_table")
             .delete()
-            .eq("food_id", foodId); // Assure-toi que l'attribut dans ta base de données est food_id
+            .eq("food_id", food_id); // Assure-toi que l'attribut dans ta base de données est food_id
 
         if (error) {
             console.log("Erreur dans la suppression :", error);
         } else {
-            setFoodList(prev => prev.filter(food => food.food_id !== foodId)); // Modifié ici pour food_id
-            if (selected === foodId) setSelected(null); // Reset sélection si supprimé
+            setFoodList(prev => prev.filter(food => food.food_id !== food_id)); // Modifié ici pour food_id
+            if (selected === food_id) setSelected(null); // Reset sélection si supprimé
         }
     };
 

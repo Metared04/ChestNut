@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components/native";
 import { FontAwesome } from '@expo/vector-icons';
 import { TouchableOpacity, Alert } from "react-native";
+import supabase from '../services/supabase';
 
 const ItemContainer = styled.View`
   flex-direction: row;
@@ -96,27 +97,27 @@ const ItemList = ({ items, selected, setSelected, onDelete }) => {
         console.log("Rendering item:", item); // Debugging line
         return (
           <ItemBox 
-            key={item.foodId} 
-            selected={item.foodId === selected} 
-            onPress={() => setSelected(item.foodId)}
+            key={item.food_id} 
+            selected={item.food_id === selected} 
+            onPress={() => setSelected(item.food_id)}
           >
             <ItemContent>
               <FontAwesome 
                 name={getFoodIcon(item.foodName)} 
                 size={24} 
-                color={item.foodId === selected ? "white" : "#888"} 
+                color={item.food_id === selected ? "white" : "#888"} 
               />
-              <ItemName selected={item.foodId === selected}>
+              <ItemName selected={item.food_id === selected}>
                 {item.foodName.length > 25 
                   ? item.foodName.slice(0, 25) + '...' 
                   : item.foodName}
               </ItemName>
-              <DaysLeft selected={item.foodId === selected}>
+              <DaysLeft selected={item.food_id === selected}>
                 {item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()} jour(s)
               </DaysLeft>
             </ItemContent>
 
-            {item.foodId === selected && (
+            {item.food_id === selected && (
               <>
 
                 <TouchableOpacity
@@ -128,7 +129,7 @@ const ItemList = ({ items, selected, setSelected, onDelete }) => {
                     padding: 6,
                     borderRadius: 16,
                   }}
-                  onPress={() => handleDelete(item.foodId)}
+                  onPress={() => handleDelete(item.food_id)}
                 >
                   <FontAwesome name="trash" size={16} color="white" />
                 </TouchableOpacity>
