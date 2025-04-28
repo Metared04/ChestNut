@@ -1,12 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import { FontAwesome } from '@expo/vector-icons';
-<<<<<<< HEAD
 import { TouchableOpacity, Alert } from "react-native";
-import supabase from '../services/supabase';
-=======
-import Food from "../models/Food";
->>>>>>> 94942e9d1158ae841603731d0f84f100e7d50ed7
 
 const ItemContainer = styled.View`
   flex-direction: row;
@@ -55,58 +50,12 @@ const CheckCircle = styled.View`
   justify-content: center;
 `;
 
-<<<<<<< HEAD
-const getFoodIcon = (foodName) => {
-  // Vérification que foodName est une chaîne de caractères valide
-  const name = foodName ? foodName.toLowerCase() : '';
-  
-  if (name.includes('bolognese') || name.includes('sauce')) return 'cutlery';
-  if (name.includes('cream') || name.includes('crème')) return 'glass';
-  if (name.includes('beef') || name.includes('boeuf')) return 'cutlery';
-  if (name.includes('chicken') || name.includes('poulet')) return 'drumstick-bite';
-  return 'shopping-basket';
-};
-
-const ItemList = ({ items, selected, setSelected, onDelete }) => {
-=======
-const ItemList = ({ items, selected, setSelected }) => (
-  <ItemContainer>
-    {items.map((item) => (
-      <ItemBox 
-        key={item.foodId} 
-        selected={item.foodId === selected} 
-        onPress={() => setSelected(item.foodId)}
-      >
-        <ItemContent>
-          <FontAwesome 
-            name={item.getFoodIcon()} 
-            size={24} 
-            color={item.foodId === selected ? "white" : "#888"} 
-          />
-          <ItemName selected={item.foodId === selected}>
-            {item.foodName}
-          </ItemName>
-          <DaysLeft selected={item.foodId === selected}>
-            {item.foodDayLeft() < 0 ? 0 : item.foodDayLeft()} jour(s)
-          </DaysLeft>
-        </ItemContent>
-        
-        {item.foodId === selected && (
-          <CheckCircle>
-            <FontAwesome name="check" size={16} color="white" />
-          </CheckCircle>
-        )}
-      </ItemBox>
-    ))}
-  </ItemContainer>
-);
->>>>>>> 94942e9d1158ae841603731d0f84f100e7d50ed7
+const ItemList = ({ items, selected, setSelected, onDelete, getFoodIcon }) => {
 
   const handleDelete = (id) => {
-    console.log("Attempting to delete food with id:", id); // Debugging line
     Alert.alert(
       "Confirmation",
-      "Voulez-vous vraiment supprimer cet aliment?",
+      "Voulez-vous vraiment supprimer cet aliment ?",
       [
         {
           text: "Annuler",
@@ -116,8 +65,7 @@ const ItemList = ({ items, selected, setSelected }) => (
           text: "Supprimer",
           onPress: () => {
             if (typeof onDelete === 'function') {
-              console.log("Deleting food with id:", id); // Debugging line
-              onDelete(id); // Call onDelete
+              onDelete(id);
             } else {
               console.error("La fonction onDelete n'est pas définie");
               Alert.alert("Erreur", "Impossible de supprimer l'élément");
@@ -131,51 +79,51 @@ const ItemList = ({ items, selected, setSelected }) => (
 
   return (
     <ItemContainer>
-      {items.map((item) => {
-        console.log("Rendering item:", item); // Debugging line
-        return (
-          <ItemBox 
-            key={item.food_id} 
-            selected={item.food_id === selected} 
-            onPress={() => setSelected(item.food_id)}
-          >
-            <ItemContent>
-              <FontAwesome 
-                name={getFoodIcon(item.foodName)} 
-                size={24} 
-                color={item.food_id === selected ? "white" : "#888"} 
-              />
-              <ItemName selected={item.food_id === selected}>
-                {item.foodName.length > 25 
-                  ? item.foodName.slice(0, 25) + '...' 
-                  : item.foodName}
-              </ItemName>
-              <DaysLeft selected={item.food_id === selected}>
-                {item.getNumberOfValidityDays() < 0 ? 0 : item.getNumberOfValidityDays()} jour(s)
-              </DaysLeft>
-            </ItemContent>
+      {items.map((item) => (
+        <ItemBox 
+          key={item.food_id} 
+          selected={item.food_id === selected} 
+          onPress={() => setSelected(item.food_id)}
+        >
+          <ItemContent>
+            <FontAwesome 
+              name={item.getFoodIcon()} 
+              size={24} 
+              color={item.food_id === selected ? "white" : "#888"} 
+            />
+            <ItemName selected={item.food_id === selected}>
+              {item.foodName.length > 25 
+                ? item.foodName.slice(0, 25) + '...' 
+                : item.foodName}
+            </ItemName>
+            <DaysLeft selected={item.food_id === selected}>
+              {item.foodDayLeft() < 0 ? 0 : item.foodDayLeft()} jour(s)
+            </DaysLeft>
+          </ItemContent>
 
-            {item.food_id === selected && (
-              <>
+          {item.food_id === selected && (
+            <>
+              <CheckCircle>
+                <FontAwesome name="check" size={16} color="white" />
+              </CheckCircle>
 
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    top: 15,
-                    right: 15,
-                    backgroundColor: 'red',
-                    padding: 6,
-                    borderRadius: 16,
-                  }}
-                  onPress={() => handleDelete(item.food_id)}
-                >
-                  <FontAwesome name="trash" size={16} color="white" />
-                </TouchableOpacity>
-              </>
-            )}
-          </ItemBox>
-        );
-      })}
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  top: 15,
+                  left: 15,
+                  backgroundColor: 'red',
+                  padding: 6,
+                  borderRadius: 16,
+                }}
+                onPress={() => handleDelete(item.food_id)}
+              >
+                <FontAwesome name="trash" size={16} color="white" />
+              </TouchableOpacity>
+            </>
+          )}
+        </ItemBox>
+      ))}
     </ItemContainer>
   );
 };

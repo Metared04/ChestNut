@@ -1,9 +1,6 @@
 import { Text, View, SafeAreaView, StatusBar as RNStatusBar, Animated } from "react-native";
 import { useEffect, useState, useRef } from 'react';
-<<<<<<< HEAD
 import supabase from '../services/supabase';
-=======
->>>>>>> 94942e9d1158ae841603731d0f84f100e7d50ed7
 import Container from "../components/Container";
 import Header from "../components/Header";
 import ItemList from "../components/Item";
@@ -61,21 +58,11 @@ function HomeScreen({ userId = 1 }) {
             const limitedFoods = sortedFoods.slice(0, 4);
             setExpiringFoods(limitedFoods);
 
-<<<<<<< HEAD
-        // Limiter à 4 produits
-        const limitedFoodInstances = sortedFoodInstances.slice(0, 4);
-        setExpiringFoods(limitedFoodInstances);
-        
-        // Sélectionner le premier élément par défaut
-        if (limitedFoodInstances.length > 0 && !selected) {
-            setSelected(limitedFoodInstances[0].food_id);
-=======
             if (limitedFoods.length > 0 && !selected) {
                 setSelected(limitedFoods[0].foodId);
             }
         } catch (error) {
             console.error("Erreur chargement aliments expirants :", error);
->>>>>>> 94942e9d1158ae841603731d0f84f100e7d50ed7
         }
     };
 

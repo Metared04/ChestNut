@@ -14,14 +14,10 @@
   "jest": {
     "preset": "jest-expo"
   },
+  
   "dependencies": {
-<<<<<<< HEAD
     "@expo/vector-icons": "^14.1.0",
     "@react-native-community/datetimepicker": "^8.3.0",
-=======
-    "@expo/vector-icons": "^14.0.2",
-    "@react-native-community/datetimepicker": "8.2.0",
->>>>>>> 94942e9d1158ae841603731d0f84f100e7d50ed7
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/native-stack": "^7.3.10",
