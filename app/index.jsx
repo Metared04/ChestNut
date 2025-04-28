@@ -23,7 +23,7 @@ export default function App() {
 </Stack.Navigator>
 */
       <StrictMode>
-              <AllFoodScreen/>
+              <HomeScreen/>
       </StrictMode>
   );
 }
