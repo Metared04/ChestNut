@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ececec",
     padding: 16,
     marginBottom: 12,
-    borderRadius: 10,
+    borderRadius: 12,
   },
   houseName: {
     fontSize: 18,
@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 12,
     marginTop: 2,
+    paddingLeft: 10,
   },
   noFurniture: {
     fontStyle: "italic",

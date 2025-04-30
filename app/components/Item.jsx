@@ -7,7 +7,7 @@ const ItemContainer = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  width: 90%;
+  padding: 0 16px;
   margin-top: 16px;
 `;
 
@@ -78,8 +78,8 @@ const ItemList = ({ items, selected, setSelected, onDelete, getFoodIcon }) => {
               color={item.foodId === selected ? "white" : "#888"} 
             />
             <ItemName style={{ color: item.foodId === selected ? 'white' : '#444' }}>
-              {item.foodName.length > 25 
-                ? item.foodName.slice(0, 25) + '...' 
+              {item.foodName.length > 29
+                ? item.foodName.slice(0, 29) + '...' 
                 : item.foodName}
             </ItemName>
             <DaysLeft style={{ color: item.foodId === selected ? 'white' : '#888' }}>
