@@ -1,15 +1,35 @@
 import supabase from './supabase';
 
 const fetchFoods = async () => {
-    return await supabase.from("all_food_table").select("*");
+    const { data, error } = await supabase.from("food_table").select("*");
+    if (error) {
+        console.error('Erreur lors de la récupération des produits :', error);
+        return null;
+    }
+    
+    return data;
+};
+
+const insertFood = async (food, idFurniture) => {
+    const foodData = {
+        food_id: food.foodId,
+        food_name: food.foodName,
+        food_brand: food.foodBrand,
+        food_registered_date: new Date(),
+        food_expiration_date: food.foodExpirationDate,
+        food_bar_code: food.foodBarCode,
+        food_qty: food.foodQty,
+        food_furniture_stored_id: idFurniture,
+    }
+    return await supabase.from("food_table").insert([foodData]).single();
 };
 
 const updatedFoodState = async (foodId, isOpened) => {
-    return await supabase.from("all_food_table").update({ food_is_opened: !isOpened }).eq("food_id", foodId);
+    return await supabase.from("food_table").update({ food_is_opened: !isOpened }).eq("food_id", foodId);
 };
 
 const deleteFood = async (food_id) => {
-    return await supabase.from("all_food_table").delete().eq("food_id", food_id);
+    return await supabase.from("food_table").delete().eq("food_id", food_id);
 };
 
 const fetchUserHouses = async (userId) => {
@@ -174,4 +194,5 @@ export default {
     fetchAllUsersData,
     fetchUserHousesWithFurniture,
     fetchUserHousesWithFurnitureAndFoods,
+    insertFood,
 };

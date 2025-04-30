@@ -40,8 +40,8 @@ class User {
 		}
 	}
 
-	getAllFurniture() {
-		return this.housesList.flatMap(house => house.getFurnitureList());
+	getAllFurnitures() {
+		return this.housesList.flatMap(house => house.getHouseFurnitureList());
 	}
 
 	getAllFoods() {

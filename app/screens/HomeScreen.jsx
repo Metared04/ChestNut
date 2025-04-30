@@ -41,9 +41,15 @@ function HomeScreen({ navigation, userId = 1 }) {
     const fetchExpiringFoods = async () => {
         try {
             const rawData = await allService.fetchAllUsersData(userId);
+            console.log("donnee brut :", rawData.user_house_table);
+            console.log("donnee brut 2 :", rawData.user_name);
             setUserNick(rawData.user_name);
             const user = buildUserFromData(rawData);
-            const allFoods = user.getAllFoods();            
+            const allFoods = user.getAllFoods();
+            const allFurnitures = user.getAllFurnitures();
+            const allHouses = user.getHousesList();
+            console.log("les meubles => ", allFurnitures);
+            console.log("les maisons => ", allHouses);
             
             const now = new Date();
             const sortedFoods = allFoods.sort((a, b) => {
