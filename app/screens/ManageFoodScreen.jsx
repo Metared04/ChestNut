@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import PreviousScreenButton from "../components/PreviousScreenBouton";
+import PreviousScreenButton from "../components/PreviousScreenButton";
 import AddFoodScreen from './AddFoodScreen';
 import ScanBarCodeButton from "../components/ScanBarCodeButton";
 

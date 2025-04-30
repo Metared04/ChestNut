@@ -1,26 +1,27 @@
 import React, { useEffect, useState } from 'react';
 
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Button, ActivityIndicator, FlatList } from "react-native";
+import { Text, View, StyleSheet} from "react-native";
 
-import { FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import allService from '../../services/allService';
+import buildUserFromData from "../../builders/buildUserFromData";
 
-import { LinearGradient } from 'expo-linear-gradient';
+import supabase from '../../services/supabase';
 
+import Food from '../../models/Food';
+import Furniture from '../../models/Furniture';
+import House from '../../models/House';
+import User from '../../models/User';
+
+import FoodNameInput from './FoodNameInput';
+import FoodBrandInput from './FoodBrandInput';
 import HouseListComponent from './HouseListComponent';
-
-import allService from "../services/allService";
-import buildUserFromData from "../builders/buildUserFromData";
-
-import supabase from '../services/supabase';
 import DateComponent from './DateComponent';
-import RecommandedDate from './RecommandedDate';
+import FoodBarCodeInput from './FoodBarCodeInput';
+import FoodQtyInput from './FoodQtyInput';
+import FoodSaveInput from './FoodSaveInput';
+import UseOpenFoodsFactsComponent from './UseOpenFoodFactsComponent';
 
-import Food from '../models/Food';
-import Furniture from '../models/Furniture';
-import House from '../models/House';
-import User from '../models/User';
-
-const AddFood = ({ userId = 1 }) => {
+const AddFoodMain = ({ userId = 1 }) => {
     const [food, setFood] = useState(new Food());
     const [selected, setSelected] = useState(null);
 
@@ -29,7 +30,7 @@ const AddFood = ({ userId = 1 }) => {
     const [idHouse, setIdHouse] = useState(1);
     const [idFurniture, setIdFurniture] = useState(1);
 
-    const [houses, setHouses] = useState(new House());
+    //const [houses, setHouses] = useState(new House());
     const [houseListe, setHouseListe] = useState([]);
     const [resetDateInput, setResetDateInput] = useState(false);
 
@@ -37,24 +38,15 @@ const AddFood = ({ userId = 1 }) => {
     const [productCategoriesData, setProductCategoriesData] = useState(null);
 
     const [recommandedDuration, setRecommandedDuration] = useState(1);
-
+    /*
     useEffect(() => {
         const fetchData = async () => {
-            if (food.foodBarCode) {
-                const data = await food.getOpenFoodFactsData();
-                //const data = await food.extractKeywords();
-                setProductNameData(data.productRealName);
-                setProductCategoriesData(data.allProductCategories);
-                console.log(typeof(productNameData));
-                console.log(typeof(productCategoriesData));
-                console.log("===> ",(productCategoriesData));
-                setRecommandedDuration(getItsCategory(data.allProductCategories));
-            }
+            
         };
     
         fetchData();
     }, [food.foodBarCode]);
-
+    */
     const getTheLastFoodId = async () => {
         try {
             const foodsData = await allService.fetchFoods();
@@ -111,6 +103,7 @@ const AddFood = ({ userId = 1 }) => {
     };
 
     const saveFood = async () => {
+        console.log("oui ?")
         const foodData = {
             food_id: food.foodId,
             food_name: food.foodName,
@@ -129,58 +122,76 @@ const AddFood = ({ userId = 1 }) => {
         }
     };
 
+    const useOpenFoodsFactsApi = async () => {
+        console.log(food.foodBarCode);
+        if (food.foodBarCode.length > 5) {
+            console.log("On en a un ! ");
+            const data = await food.getOpenFoodFactsData();
+            if(data === null){
+                console.log("??? Probleme juste la !");
+            } else {
+                setProductNameData(data.productRealName);
+                setProductCategoriesData(data.allProductCategories);
+                //console.log(typeof(productNameData));
+                //console.log(typeof(productCategoriesData));
+                //console.log("===> ",(productCategoriesData));
+                setRecommandedDuration(getItsCategory(data.allProductCategories));
+            }
+            //const data = await food.extractKeywords();
+        } else {
+            // Mettre un pop up pour dire que le code barre est pas correct
+            console.log("c'est pas bon");
+        }
+    };
+
     return (
         <View style={{ flex: 1 }}>
             <View>
                 <Text style={styles.label}>Ajout d'un produit</Text>
             </View>
-            <TextInput
-                placeholder="Nom du produit"
-                value={food.foodName}
-                style={styles.input}
-                onChangeText={(text) => handleChange("foodName", text)}
+
+            <FoodNameInput 
+                value={food.foodName} 
+                onChange={(text) => handleChange("foodName", text)} 
             />
-            <TextInput
-                placeholder="Marque"
-                value={food.foodBrand}
-                style={styles.input}
-                onChangeText={(text) => handleChange("foodBrand", text)}
+
+            <FoodBrandInput 
+                value={food.foodBrand} 
+                onChange={(text) => handleChange("foodBrand", text)} 
             />
+
             <Text style={styles.label}>Stocké où ?</Text>
-            <HouseListComponent houses={houseListe} selected={selected} setSelected={setSelected} onFurnitureSelect={handleFurnitureSelect}/>
+
+            <HouseListComponent 
+                houses={houseListe} 
+                selected={selected} 
+                setSelected={setSelected} 
+                onFurnitureSelect={handleFurnitureSelect}
+            />
+
             <Text style={styles.label}>Date de peremption</Text>
+
             <Text> ici pour la date recommander : {recommandedDuration ? recommandedDuration : "jsaipo"} jour(s), ce qui donne : {getRecommandedDate(recommandedDuration) ? getRecommandedDate(recommandedDuration) : "po trouve"}</Text>
+            
             <DateComponent
                 onChange={(date) => handleChange("foodExpirationDate", date)}
                 reset={resetDateInput}
             />
             <Text style={styles.label}>Code barre</Text>
-            <TextInput
-                placeholder="Code barre"
-                style={styles.input}
+
+            <FoodBarCodeInput
                 value={food.foodBarCode}
-                onChangeText={(text) => handleChange("foodBarCode", text)}
-                maxLength={15}
+                onChange={(text) => handleChange("foodBarCode", text)}
             />
+
+            <UseOpenFoodsFactsComponent useOpenFoodsFactsApi={useOpenFoodsFactsApi} />
             <Text>Quantité</Text>
-            <TextInput
-                placeholder="Quantité"
-                keyboardType="numeric"
-                style={styles.input}
+
+            <FoodQtyInput
                 value={food.foodQty.toString()}
-                onChangeText={(text) => handleChange("foodQty", text)}
-                maxLength={3}
+                onChange={(text) => handleChange("foodQty", text)}
             />
-            <LinearGradient
-                colors={['#8027d6', '#d17af9']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.saveButtonGradient}
-            >
-                <TouchableOpacity onPress={saveFood} style={styles.saveButtonTouchable} activeOpacity={0.8}>
-                    <Text style={styles.saveButtonText}>Sauvegarder</Text>
-                </TouchableOpacity>
-            </LinearGradient>
+            <FoodSaveInput saveFood={saveFood}/>
         </View>
     );
 };
@@ -195,7 +206,8 @@ function getItsCategory(keywordsList){
             console.log("oui ! ");
             return shelfLifeMap[keyword];
         } else {
-          console.log("rate !");
+            console.log("rate !");
+            return 7;
         }
     }
 }
@@ -209,6 +221,7 @@ function getDateInMiliseconde(numberOfDays){
 
 function getRecommandedDate(number){
     return (new Date(Date.now() + getDateInMiliseconde(number))).toISOString().split('T')[0];
+    //return (new Date(Date.now() + 604800000)).toISOString().split('T')[0];
 }
 
 const categoryMap = {
@@ -227,7 +240,7 @@ const categoryMap = {
 	"fromage râpé": "Fromages",
 	"fromage frais": "Fromages",
 	"fromage à pâte dure": "Fromages",
-  "laits": "Laits et Produits Laitiers Divers",
+    "laits": "Laits et Produits Laitiers Divers",
 	"lait uht": "Laits et Produits Laitiers Divers",
 	"laits uht": "Laits et Produits Laitiers Divers",
 	"lait ultra-pasteurisé": "Laits et Produits Laitiers Divers",
@@ -259,69 +272,57 @@ const categoryMap = {
 };
 
 const shelfLifeMap = {
-  "abats frais": 1,
-  "viande hachée du boucher": 1,
-  "saucisses": 1,
-  "fruits de mer": 1,
-  "poissons crus": 1,
-  "crême fraîche au lait cru": 2,
-  "oeufs durs": 2,
-  "viande cuite emballée": 2,
-  "fruits rouge": 2,
-  "yaourt": 3,
-  "lait uht": 3,
-  "laits uht": 3,
-  "sauce pour pâtes": 3,
-  "charcuterie": 3,
-  "charcuteries": 3,
-  "charcuterie tranchée": 3,
-  "charcuterie préemballée": 3,
-  "potage": 3,
-  "soupe": 3,
-  "crême fraîche pasteurisée": 4,
-  "jus de fruit entamé": 5,
-  "jus de fruit": 5,
-  "raisins": 5,
-  "prunes": 5,
-  "lait ultra-pasteurisé": 7,
-  "fromage rapé": 7,
-  "fromage frais": 7,
-  "pêche": 7,
-  "abricots": 7,
-  "poivrons": 7,
-  "radis": 7,
-  "navet": 7,
-  "tomates": 7,
-  "courgettes": 7,
-  "concombre": 7,
-  "poireau": 7,
-  "beurre": 14,
-  "frommage à pâte dure": 21,
-  "oeufs frais": 21,
-  "bettraves": 21,
-  "mayonnaise": 60,
-  "pommes": 60,
-  "carottes": 90,
-  "ketchup": 364,
+    "abats frais": 1,
+    "viande hachée du boucher": 1,
+    "saucisses": 1,
+    "fruits de mer": 1,
+    "poissons crus": 1,
+    "crême fraîche au lait cru": 2,
+    "oeufs durs": 2,
+    "viande cuite emballée": 2,
+    "fruits rouge": 2,
+    "yaourt": 3,
+    "lait uht": 3,
+    "laits uht": 3,
+    "sauce pour pâtes": 3,
+    "charcuterie": 3,
+    "charcuteries": 3,
+    "charcuterie tranchée": 3,
+    "charcuterie préemballée": 3,
+    "potage": 3,
+    "soupe": 3,
+    "crême fraîche pasteurisée": 4,
+    "jus de fruit entamé": 5,
+    "jus de fruit": 5,
+    "raisins": 5,
+    "prunes": 5,
+    "lait ultra-pasteurisé": 7,
+    "fromage rapé": 7,
+    "fromage frais": 7,
+    "pêche": 7,
+    "abricots": 7,
+    "poivrons": 7,
+    "radis": 7,
+    "navet": 7,
+    "tomates": 7,
+    "courgettes": 7,
+    "concombre": 7,
+    "poireau": 7,
+    "beurre": 14,
+    "frommage à pâte dure": 21,
+    "oeufs frais": 21,
+    "bettraves": 21,
+    "mayonnaise": 60,
+    "pommes": 60,
+    "carottes": 90,
+    "ketchup": 364,
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: 'white',
-    flex: 1,
-  },
   label: {
     fontWeight: '600',
     marginBottom: 6,
     marginTop: 16,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#f9f9f9',
   },
   radioGroup: {
     flexDirection: 'row',
@@ -351,78 +352,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#a855f7',
   },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  saveButtonGradient: {
-    marginTop: 30,
-    borderRadius: 10,
-    overflow: 'hidden', // pour que le bouton ne dépasse pas le gradient
-  },
-  
   saveButtonTouchable: {
     paddingVertical: 14,
     alignhouses: 'center',
     justifyContent: 'center',
   },
-  
-  saveButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
 });
 
 
-export default AddFood;
-
-/*
-            <Text style={styles.label}>Date de rangement</Text>
-            <DateComponent
-                onChange={(date) => handleChange("foodRegisteredDate", date)}
-                reset={resetDateInput}
-            />
-
-            {house.foodId === selected && (
-            <>
-
-              <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  bottom: 15,
-                  right: 15,
-                  backgroundColor: 'red',
-                  padding: 6,
-                  borderRadius: 16,
-                }}
-                onPress={() => handleDelete(house.food_id)}
-              >
-                <FontAwesome name="trash" size={16} color="white" />
-              </TouchableOpacity>
-            </>
-          )}
-
-          <View style={[styles.outerCircle, food.foodFurnitureStoredId && styles.selected]}>
-                          {food.foodFurnitureStoredId === 1 && <View style={styles.innerCircle} />}
-                          
-                      </View>
-
-                      selected={house.houseId === selected} 
-          onPress={() => setSelected(house.houseId)}
-
-<View style={styles.radioGroup}>
-                <TouchableOpacity onPress={() => handleChange("foodFurnitureStoredId", 1)} style={styles.radioButton}>
-                    <View style={[styles.outerCircle, food.foodFurnitureStoredId && styles.selected]}>
-                        {food.foodFurnitureStoredId === 1 && <View style={styles.innerCircle} />}
-                    </View>
-                <Text>Frigo</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleChange("foodFurnitureStoredId", 2)} style={styles.radioButton}>
-                    <View style={[styles.outerCircle, !food.foodFurnitureStoredId && styles.selected]}>
-                        {food.foodFurnitureStoredId === 2 && <View style={styles.innerCircle} />}
-                    </View>
-                    <Text>Congelo</Text>
-                </TouchableOpacity>
-            </View>
-*/
+export default AddFoodMain;

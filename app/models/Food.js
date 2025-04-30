@@ -142,6 +142,7 @@ class Food
 
         async getOpenFoodFactsData(){
                 if (this.foodBarCode === ""){
+                        console.log("Fichier food.js : Vous devez entrer un code complet");
                         return null;
                 } else {
                         return fetch(`https://world.openfoodfacts.org/api/v3/product/${this.foodBarCode}.json`)

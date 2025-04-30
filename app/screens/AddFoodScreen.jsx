@@ -1,11 +1,14 @@
 import React from 'react';
 import { View } from 'react-native';
-import AddFood from '../components/AddFood';
+import AddFoodMain from '../components/AddFood/AddFoodMain';
+/*
+import AddFood from '../components/AddFoodTest';
+*/
 
 function AddFoodScreen (){
     return (
         <View>
-            <AddFood />
+            <AddFoodMain />
         </View>
     );
 };
