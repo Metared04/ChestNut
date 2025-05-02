@@ -93,4 +93,4 @@ const FoodList = ({ renderItem }) => {
     );
 };
 
-export default FoodList;
+// export default FoodList;

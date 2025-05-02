@@ -36,7 +36,7 @@ const ShowHouse = ({ userId/*, navigation*/ }) => {
       );
 }
 
-export default ShowHouse;
+// export default ShowHouse;
 
 const styles = StyleSheet.create({
     container: {

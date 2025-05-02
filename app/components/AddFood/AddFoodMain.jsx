@@ -38,15 +38,7 @@ const AddFoodMain = ({ userId = 1 }) => {
     const [productCategoriesData, setProductCategoriesData] = useState(null);
 
     const [recommandedDuration, setRecommandedDuration] = useState(1);
-    /*
-    useEffect(() => {
-        const fetchData = async () => {
-            
-        };
-    
-        fetchData();
-    }, [food.foodBarCode]);
-    */
+
     const getTheLastFoodId = async () => {
         try {
             const foodsData = await allService.fetchFoods();
@@ -89,7 +81,6 @@ const AddFoodMain = ({ userId = 1 }) => {
             key === "foodExpirationDate" ? value : prev.foodExpirationDate,
             key === "foodBarCode" ? value : prev.foodBarCode,
             key === "foodQty" ? parseInt(value) : prev.foodQty,
-            //key === "foodIsOpened" ? value : prev.foodIsOpened,
             key === "foodFurnitureStoredId" ? value : prev.foodFurnitureStoredId
         ));
 
@@ -97,7 +88,6 @@ const AddFoodMain = ({ userId = 1 }) => {
     };
 
     const handleFurnitureSelect = (furniture, house) => {
-      //console.log("Meuble sélectionné :", furniture.inventoryId, ", Maison correspondante :", house.houseId);
         setIdFurniture(furniture.inventoryId);
         setIdHouse(house.houseId);
     };
@@ -185,12 +175,14 @@ const AddFoodMain = ({ userId = 1 }) => {
             />
 
             <UseOpenFoodFactsComponent useOpenFoodsFactsApi={useOpenFoodsFactsApi} />
+
             <Text>Quantité</Text>
 
             <FoodQtyInput
                 value={food.foodQty.toString()}
                 onChange={(text) => handleChange("foodQty", text)}
             />
+
             <FoodSaveInput saveFood={saveFood}/>
         </View>
     );
@@ -221,7 +213,6 @@ function getDateInMiliseconde(numberOfDays){
 
 function getRecommandedDate(number){
     return (new Date(Date.now() + getDateInMiliseconde(number))).toISOString().split('T')[0];
-    //return (new Date(Date.now() + 604800000)).toISOString().split('T')[0];
 }
 
 const categoryMap = {

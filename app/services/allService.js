@@ -137,7 +137,7 @@ const fetchUserHousesWithFurnitureAndFoods = async (userId) => {
     .eq('user_house_owner_id', userId);
 
     if (error) {
-        console.error("Erreur fetchUserHousesWithFurnitureAndFoods :", error);
+        console.error("Erreur dans la requete fetchUserHousesWithFurnitureAndFoods :", error);
         return [];
     }
 

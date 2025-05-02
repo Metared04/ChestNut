@@ -35,7 +35,7 @@ const ShowFurniture = ({ houseId/*, navigation*/ }) => {
       );
 }
 
-export default ShowFurniture;
+// export default ShowFurniture;
 
 const styles = StyleSheet.create({
     container: {
