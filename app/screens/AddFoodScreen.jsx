@@ -1,15 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 import AddFoodMain from '../components/AddFood/AddFoodMain';
-/*
-import AddFood from '../components/AddFoodTest';
-*/
 
 function AddFoodScreen (){
     return (
-        <View>
+        <ScrollView>
             <AddFoodMain />
-        </View>
+        </ScrollView>
     );
 };
 

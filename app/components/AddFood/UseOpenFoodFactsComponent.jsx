@@ -1,6 +1,6 @@
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
-function UseOpenFoodsFactsComponent( {useOpenFoodsFactsApi} ) {
+function UseOpenFoodFactsComponent( {useOpenFoodsFactsApi} ) {
     return (
         <TouchableOpacity onPress={useOpenFoodsFactsApi} style={styles.saveButtonTouchable} activeOpacity={0.8}>
             <Text style={styles.saveButtonText}>Verifier</Text>
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default UseOpenFoodsFactsComponent;
+export default UseOpenFoodFactsComponent;

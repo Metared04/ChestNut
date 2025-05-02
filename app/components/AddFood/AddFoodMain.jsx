@@ -19,7 +19,7 @@ import DateComponent from './DateComponent';
 import FoodBarCodeInput from './FoodBarCodeInput';
 import FoodQtyInput from './FoodQtyInput';
 import FoodSaveInput from './FoodSaveInput';
-import UseOpenFoodsFactsComponent from './UseOpenFoodFactsComponent';
+import UseOpenFoodFactsComponent from './UseOpenFoodFactsComponent';
 
 const AddFoodMain = ({ userId = 1 }) => {
     const [food, setFood] = useState(new Food());
@@ -125,7 +125,7 @@ const AddFoodMain = ({ userId = 1 }) => {
     const useOpenFoodsFactsApi = async () => {
         console.log(food.foodBarCode);
         if (food.foodBarCode.length > 5) {
-            console.log("On en a un ! ");
+            console.log("On en a un, code barre existant ! ");
             const data = await food.getOpenFoodFactsData();
             if(data === null){
                 console.log("??? Probleme juste la !");
@@ -140,7 +140,7 @@ const AddFoodMain = ({ userId = 1 }) => {
             //const data = await food.extractKeywords();
         } else {
             // Mettre un pop up pour dire que le code barre est pas correct
-            console.log("c'est pas bon");
+            console.log("c'est pas bon, code barre incomplet");
         }
     };
 
@@ -184,7 +184,7 @@ const AddFoodMain = ({ userId = 1 }) => {
                 onChange={(text) => handleChange("foodBarCode", text)}
             />
 
-            <UseOpenFoodsFactsComponent useOpenFoodsFactsApi={useOpenFoodsFactsApi} />
+            <UseOpenFoodFactsComponent useOpenFoodsFactsApi={useOpenFoodsFactsApi} />
             <Text>Quantité</Text>
 
             <FoodQtyInput
