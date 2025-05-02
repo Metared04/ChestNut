@@ -167,7 +167,7 @@ const AddFood = ({ userId = 1 }) => {
                 placeholder="Quantité"
                 keyboardType="numeric"
                 style={styles.input}
-                value={food.foodQty.toString()}
+                value={food.foodQty ? food.foodQty.toString() : ""}
                 onChangeText={(text) => handleChange("foodQty", text)}
                 maxLength={3}
             />
