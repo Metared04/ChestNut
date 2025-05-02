@@ -108,7 +108,6 @@ function DateComponent({ onChange, reset }) {
 export default DateComponent;
 
 const styles = StyleSheet.create({
-    
   container: { 
     marginBottom: 20,
   },

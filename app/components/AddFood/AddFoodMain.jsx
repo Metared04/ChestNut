@@ -315,39 +315,6 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     marginTop: 16,
   },
-  radioGroup: {
-    flexDirection: 'row',
-    gap: 20,
-    marginTop: 8,
-  },
-  radioButton: {
-    flexDirection: 'row',
-    alignhouses: 'center',
-    gap: 8,
-  },
-  outerCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#ccc',
-    justifyContent: 'center',
-    alignhouses: 'center',
-  },
-  selected: {
-    borderColor: '#a855f7',
-  },
-  innerCircle: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#a855f7',
-  },
-  saveButtonTouchable: {
-    paddingVertical: 14,
-    alignhouses: 'center',
-    justifyContent: 'center',
-  },
 });
 
 
