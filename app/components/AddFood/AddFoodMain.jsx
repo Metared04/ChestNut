@@ -122,10 +122,12 @@ const AddFoodMain = ({ userId = 1 }) => {
             } else {
                 setProductNameData(data.productRealName);
                 setProductCategoriesData(data.allProductCategories);
-                //console.log(typeof(productNameData));
+                //console.log(data.allProductCategories);
                 //console.log(typeof(productCategoriesData));
                 //console.log("===> ",(productCategoriesData));
-                setRecommandedDuration(getItsCategory(data.allProductCategories));
+                //setRecommandedDuration(getItsCategory(data.allProductCategories));
+                const resultat = getItsCategory(data.allProductCategories);
+                // Faire une comparaison de resultat avec data.productRealName
             }
             //const data = await food.extractKeywords();
         } else {
@@ -189,19 +191,35 @@ const AddFoodMain = ({ userId = 1 }) => {
 };
 
 
-function getItsCategory(keywordsList){
+async function getItsCategory(keywordsList){
     //console.log("je rentre !");
     for(let i = 0; i < keywordsList.length; i++){
         const keyword = keywordsList[i].toLowerCase().trim();
-        //console.log(i, "-> On essaie : ", keyword)
+        const req = await allService.fetchAllProductCategories(keyword);
+        //console.log("resultat = ", req);
+        //console.log("resultat id = ", typeof(req.category_id));
+        if(req.length !== 0 ){
+            console.log("Test : ", req.category_id);
+            const tab = getDuration(req.category_id, keyword);
+            //return tab;
+        } else {
+            console.log("Aucune data trouve.");
+            return [];
+        }
+        /*
         if(keyword in shelfLifeMap){
             console.log("oui ! ");
             return shelfLifeMap[keyword];
         } else {
             console.log("rate !");
             return 7;
-        }
+        }*/
     }
+}
+
+async function getDuration(id){
+    const res = await allService.filtrationCategories(id);
+    console.log("un autre resultat : ", res);
 }
 
 function getDateInMiliseconde(numberOfDays){
@@ -212,102 +230,10 @@ function getDateInMiliseconde(numberOfDays){
 }
 
 function getRecommandedDate(number){
-    return (new Date(Date.now() + getDateInMiliseconde(number))).toISOString().split('T')[0];
+    //return (new Date(Date.now() + getDateInMiliseconde(number))).toISOString().split('T')[0];
+    return 14*86400000;
 }
 
-const categoryMap = {
-	"abats frais": "Viandes",
-	"viande hachée du boucher": "Viandes",
-	"saucisses": "Viandes",
-	"viande cuite emballée": "Viandes",
-	"fruits de mer": "Poissons et Fruits de mer",
-	"poissons crus": "Poissons et Fruits de mer",
-	"charcuterie": "Charcuteries",
-	"bacon": "Charcuteries",
-	"charcuterie tranchée": "Charcuteries",
-	"charcuterie préemballée": "Charcuteries",
-	"crème fraîche au lait cru": "Crèmes",
-	"crème fraîche pasteurisée": "Crèmes",
-	"fromage râpé": "Fromages",
-	"fromage frais": "Fromages",
-	"fromage à pâte dure": "Fromages",
-    "laits": "Laits et Produits Laitiers Divers",
-	"lait uht": "Laits et Produits Laitiers Divers",
-	"laits uht": "Laits et Produits Laitiers Divers",
-	"lait ultra-pasteurisé": "Laits et Produits Laitiers Divers",
-	"beurre": "Laits et Produits Laitiers Divers",
-	"oeufs frais": "Laits et Produits Laitiers Divers",
-	"yaourt": "Produits Transformés à Base de Lait",
-	"potage": "Soupe et Potage",
-	"soupe": "Soupe et Potage",
-	"sauce pour pâtes": "Sauces",
-	"jus de fruit": "Jus de Fruits",
-	"jus de fruit entamé": "Jus de Fruits",
-	"raisins": "Fruits",
-	"prunes": "Fruits",
-	"pêche": "Fruits",
-	"abricots": "Fruits",
-	"pommes": "Fruits",
-	"poivrons": "Fruits",
-	"radis": "Fruits",
-	"navet": "Fruits",
-	"tomates": "Fruits",
-	"courgettes": "Fruits",
-	"concombre": "Fruits",
-	"poireau": "Fruits",
-	"carottes": "Légumes",
-	"bettraves": "Légumes",
-	"mayonnaise": "Condiments et Sauces",
-	"ketchup": "Condiments et Sauces",
-	"pommes de terre": "Épicerie",
-};
-
-const shelfLifeMap = {
-    "abats frais": 1,
-    "viande hachée du boucher": 1,
-    "saucisses": 1,
-    "fruits de mer": 1,
-    "poissons crus": 1,
-    "crême fraîche au lait cru": 2,
-    "oeufs durs": 2,
-    "viande cuite emballée": 2,
-    "fruits rouge": 2,
-    "yaourt": 3,
-    "lait uht": 3,
-    "laits uht": 3,
-    "sauce pour pâtes": 3,
-    "charcuterie": 3,
-    "charcuteries": 3,
-    "charcuterie tranchée": 3,
-    "charcuterie préemballée": 3,
-    "potage": 3,
-    "soupe": 3,
-    "crême fraîche pasteurisée": 4,
-    "jus de fruit entamé": 5,
-    "jus de fruit": 5,
-    "raisins": 5,
-    "prunes": 5,
-    "lait ultra-pasteurisé": 7,
-    "fromage rapé": 7,
-    "fromage frais": 7,
-    "pêche": 7,
-    "abricots": 7,
-    "poivrons": 7,
-    "radis": 7,
-    "navet": 7,
-    "tomates": 7,
-    "courgettes": 7,
-    "concombre": 7,
-    "poireau": 7,
-    "beurre": 14,
-    "frommage à pâte dure": 21,
-    "oeufs frais": 21,
-    "bettraves": 21,
-    "mayonnaise": 60,
-    "pommes": 60,
-    "carottes": 90,
-    "ketchup": 364,
-};
 
 const styles = StyleSheet.create({
   label: {

@@ -47,8 +47,6 @@ const fetchUserHouses = async (userId) => {
 };
 
 const getFurnitureByHouseId = async (houseId) => {
-    //const user_data = await allService.fetchUserHouses(userId);
-    //id_user = user_data[0].user_house_id;
     const { data, error } = await supabase
         .from('all_user_furniture_table')
         .select('*')
@@ -181,7 +179,37 @@ const fetchAllUsersData = async (userId) => {
     }
   
     return data?.[0]; // On suppose que user_id est unique, donc on prend le premier élément
-  };
+};
+
+const fetchAllProductCategories = async (keyword) => {
+    const { data, error } = await supabase
+    .from('categories_product_table')
+    .select('category_id')
+    .ilike('category_name', `%${keyword}%`);
+
+    if (error) {
+        console.error('Erreur lors de la recherche de la bonne categorie : ', error);
+        return null;
+    }
+    if(data.length === 0){
+        return [];
+    } else {
+        return data?.[0];
+    }
+}
+
+const filtrationCategories = async (id) => {
+    const { data, error } = await supabase
+    .from('product_duration_table')
+    .select('*')
+    .eq('product_category_id', id);
+    //.ilike('product_name', `%${keyword}%`);
+    
+    if(error){
+        console.log("Erreur lors de la recuperation de la duree : ", error);
+    }
+    return data;
+}
 
 export default {
     fetchFoods,
@@ -195,4 +223,6 @@ export default {
     fetchUserHousesWithFurniture,
     fetchUserHousesWithFurnitureAndFoods,
     insertFood,
+    fetchAllProductCategories,
+    filtrationCategories,
 };
