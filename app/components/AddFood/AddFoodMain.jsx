@@ -193,18 +193,28 @@ const AddFoodMain = ({ userId = 1 }) => {
 
 async function getItsCategory(keywordsList){
     //console.log("je rentre !");
+    const b = [];
     for(let i = 0; i < keywordsList.length; i++){
         const keyword = keywordsList[i].toLowerCase().trim();
+        console.log("On va essayer avec :", keyword);
         const req = await allService.fetchAllProductCategories(keyword);
-        //console.log("resultat = ", req);
+        console.log("resultat = ", req);
         //console.log("resultat id = ", typeof(req.category_id));
         if(req.length !== 0 ){
-            console.log("Test : ", req.category_id);
-            const tab = getDuration(req.category_id, keyword);
+            //b.push({keyword, req});
+            console.log("Test avec l'id n° ", req.category_id);
+            const tab = await getDuration(req.category_id/*, keyword*/);
+            const vraiTab = [];
+            for(let i = 0; i < tab.length; i++){
+                vraiTab.push(tab[i].product_name);
+            }
+            console.log("Le tab : ",tab)
+            console.log("Le vrai tab : ",vraiTab)
+            b.push({keyword, tab});
             //return tab;
         } else {
             console.log("Aucune data trouve.");
-            return [];
+            //return [];
         }
         /*
         if(keyword in shelfLifeMap){
@@ -215,11 +225,14 @@ async function getItsCategory(keywordsList){
             return 7;
         }*/
     }
+    console.log("b => ", b);
+    return [];
 }
 
 async function getDuration(id){
     const res = await allService.filtrationCategories(id);
     console.log("un autre resultat : ", res);
+    return res;
 }
 
 function getDateInMiliseconde(numberOfDays){

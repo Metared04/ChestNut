@@ -201,7 +201,11 @@ const fetchAllProductCategories = async (keyword) => {
 const filtrationCategories = async (id) => {
     const { data, error } = await supabase
     .from('product_duration_table')
-    .select('*')
+    .select(`
+        product_name,
+        product_duration,
+        product_category_id
+        `)
     .eq('product_category_id', id);
     //.ilike('product_name', `%${keyword}%`);
     
