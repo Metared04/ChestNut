@@ -160,10 +160,10 @@ class Food
 					return null;
 				}
 
-				const productRealName = data.product.product_name || "";
+				const trueProductName = data.product.product_name || "";
 				const allProductCategories = data.product.categories.split(",");
-                                //return productRealName;
-				return { productRealName, allProductCategories };
+                                //return trueProductName;
+				return { trueProductName, allProductCategories };
 			})
 			.catch(error => {
 				console.error("Erreur :", error);

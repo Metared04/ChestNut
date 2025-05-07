@@ -21,6 +21,153 @@ import FoodQtyInput from './FoodQtyInput';
 import FoodSaveInput from './FoodSaveInput';
 import UseOpenFoodFactsComponent from './UseOpenFoodFactsComponent';
 
+async function parcoursListe(liste) {
+    try {
+        var matchedCategory = [];
+        for(let i = 0; i < liste.length; i++) {
+            const getCategories = await allService.fetchAllProductCategories(liste[i].toLowerCase().normalize().trim());
+             if (getCategories.length !== 0){
+                matchedCategory.push(getCategories)
+            };
+        }
+        return(matchedCategory);
+    }
+        catch(error){
+            console.error("Erreur chargement  :", error);
+        }
+}
+
+async function recupProduitsBDD(listeCategorie) {
+    try {
+        console.log("liste categorie : ", listeCategorie);
+        var allMatchedCategories = [];
+        for(let i= 0; i < listeCategorie.length; i++) {
+            const getProducts = await allService.filtrationCategories(listeCategorie[i].category_id);
+            if (getProducts.length !== 0){
+                for(let i= 0; i < getProducts.length; i++){
+                    allMatchedCategories.push(getProducts[i]);
+                }
+            };
+        }
+        return(allMatchedCategories);
+    }
+    catch(error){
+        console.error("Erreur dans recupProduitsBDD :", error);
+    }
+}
+
+function similaritéParMots(a, b) {
+    const motsA = a.toLowerCase().trim().split(/\s+/);
+    const motsB = b.toLowerCase().trim().split(/\s+/);
+
+    let totalScore = 0;
+
+    for (const motB of motsB) {
+        let minScore = Infinity;
+        for (const motA of motsA) {
+            const score = levenshtein(motA, motB);
+            minScore = Math.min(minScore, score);
+        }
+
+        // BONUS : si le mot est présent tel quel, réduis fortement le score
+        if (motsA.includes(motB)) {
+            minScore -= 2; // ou * 0.5, ou fixe à 0
+        }
+
+        totalScore += Math.max(minScore, 0); // évite score négatif
+    }
+
+    return totalScore;
+}
+
+function trouverNomLePlusSimilaire(reference, liste) {
+    let meilleurNom = null;
+    let meilleurScore = Infinity;
+
+    for (const candidat of liste) {
+        const score = similaritéParMots(reference, candidat.product_name);
+        if (score < meilleurScore) {
+            meilleurScore = score;
+            meilleurNom = candidat;
+        }
+    }
+
+    return meilleurNom;
+}
+
+function nettoyerNomProduit(nom) {
+    return nom
+      .toLowerCase()
+      .normalize("NFD")                 // décompose les lettres accentuées (é → e + ́)
+      .replace(/[\u0300-\u036f]/g, "") // supprime les marques d'accent
+      .replace(/[^\w\s]/gi, '')        // retire les caractères spéciaux restants
+      .replace(/\d+/g, '')             // retire les nombres
+      .trim()
+      .split(/\s+/);                   // découpe en mots
+  }
+
+function levenshtein(a, b) {
+    const matrix = Array.from({ length: a.length + 1 }, () => []);
+    for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        matrix[i][j] = Math.min(
+            matrix[i - 1][j] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j - 1] + cost
+        );
+        }
+    }
+    return matrix[a.length][b.length];
+}
+
+function trouverCorrespondances(vraiNom, tabProduits) {
+    if (tabProduits.length > 0) {
+        var meilleurNom = tabProduits[0].product_name;
+        var meilleurValLevenshtein = 100;
+
+        for (let i = 0; i < tabProduits.length; i++){
+            var nomActuel = tabProduits[i].product_name;
+            var valeurLevenshteinActuel = levenshtein(vraiNom, nomActuel);
+
+            if (meilleurValLevenshtein > valeurLevenshteinActuel) {
+                meilleurValLevenshtein = valeurLevenshteinActuel;
+                meilleurNom = nomActuel;
+            }
+        }
+        return(meilleurNom);
+    } 
+}
+
+/*function trouverCorrespondances(nomSaisi, tabBDD) {
+    const motsSaisis = nomSaisi;
+    const motBDD = tabBDD;
+    //const tabBDD = extraireMotsBase(produitsBDD);
+    console.log("mot bdd :",motBDD.tab);
+    const correspondances = motsSaisis.map((mot) => {
+        let meilleurMot = null;
+        let meilleureDistance = Infinity;
+
+        motBDD.forEach((index) => {
+            console.log("mot a comparer : ", mot,"index = ", index);
+            console.log("index.tab : ", index.tab);
+        const dist = levenshtein(mot, index.keyword);
+        console.log("dist : ", dist);
+        if (dist < meilleureDistance) {
+            meilleureDistance = dist;
+            meilleurMot = index;
+        }
+        });
+
+        return { mot, correspondance: meilleurMot };
+    });
+    console.log("correspondanse: ", correspondances);
+    return correspondances;
+}*/
+
 const AddFoodMain = ({ userId = 1 }) => {
     const [food, setFood] = useState(new Food());
     const [selected, setSelected] = useState(null);
@@ -120,13 +267,30 @@ const AddFoodMain = ({ userId = 1 }) => {
             if(data === null){
                 console.log("??? Probleme juste la !");
             } else {
-                setProductNameData(data.productRealName);
+                setProductNameData(data.trueProductName);
+            const potentialCategories = await parcoursListe(data.allProductCategories);
+            console.log(potentialCategories);
+            const potentialProducts = await recupProduitsBDD(potentialCategories);
+            console.log("=> ", potentialProducts);
+            const nomCorrespondant = trouverCorrespondances(data.trueProductName, potentialProducts);
+            console.log(nomCorrespondant);
+            const testNom = trouverNomLePlusSimilaire(data.trueProductName, potentialProducts);
+            console.log("code chatgpt : ", testNom);
+                /*const nomNettoyer = nettoyerNomProduit(data.productRealName);
+                console.log("resultat ",nomNettoyer);
+                console.log(data.allProductCategories);
                 setProductCategoriesData(data.allProductCategories);
+                const kategories = await getItsCategory(data.allProductCategories);
+                console.log(kategories);
+                trouverCorrespondances(nomNettoyer, kategories);*/
+
+
+                //ici comparer nom nettoyer et kategories
                 //console.log(data.allProductCategories);
                 //console.log(typeof(productCategoriesData));
                 //console.log("===> ",(productCategoriesData));
                 //setRecommandedDuration(getItsCategory(data.allProductCategories));
-                const resultat = getItsCategory(data.allProductCategories);
+                //const resultat = getItsCategory(data.allProductCategories);
                 // Faire une comparaison de resultat avec data.productRealName
             }
             //const data = await food.extractKeywords();
@@ -193,18 +357,28 @@ const AddFoodMain = ({ userId = 1 }) => {
 
 async function getItsCategory(keywordsList){
     //console.log("je rentre !");
+    const b = [];
     for(let i = 0; i < keywordsList.length; i++){
         const keyword = keywordsList[i].toLowerCase().trim();
+        console.log("On va essayer avec :", keyword);
         const req = await allService.fetchAllProductCategories(keyword);
-        //console.log("resultat = ", req);
+        console.log("resultat = ", req);
         //console.log("resultat id = ", typeof(req.category_id));
         if(req.length !== 0 ){
-            console.log("Test : ", req.category_id);
-            const tab = getDuration(req.category_id, keyword);
-            //return tab;
+            //b.push({keyword, req});
+            console.log("Test avec l'id n° ", req.category_id);
+            const tab = await getDuration(req.category_id/*, keyword*/);
+            const vraiTab = [];
+            for(let i = 0; i < tab.length; i++){
+                vraiTab.push(tab[i].product_name);
+            }
+            console.log("Le tab : ",tab)
+            console.log("Le vrai tab : ",vraiTab)
+            b.push({keyword, tab});
+            return b;
         } else {
             console.log("Aucune data trouve.");
-            return [];
+            //return [];
         }
         /*
         if(keyword in shelfLifeMap){
@@ -215,11 +389,14 @@ async function getItsCategory(keywordsList){
             return 7;
         }*/
     }
+    console.log("b => ", b);
+    return [];
 }
 
 async function getDuration(id){
     const res = await allService.filtrationCategories(id);
     console.log("un autre resultat : ", res);
+    return res;
 }
 
 function getDateInMiliseconde(numberOfDays){
