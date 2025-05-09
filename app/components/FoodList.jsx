@@ -19,7 +19,7 @@ const FoodList = ({ renderItem }) => {
             } else {
                 const allFoodInstances = data.map(food =>
                     new Food(
-                        food.food_id,  // Vérifie que le modèle Food utilise food_id et pas food_id
+                        food.food_id,
                         food.food_name,
                         food.food_brand,
                         food.food_registered_date,
@@ -93,4 +93,4 @@ const FoodList = ({ renderItem }) => {
     );
 };
 
-export default FoodList;
+// export default FoodList;

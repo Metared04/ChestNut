@@ -35,7 +35,7 @@ const ShowFood = ({ furnitureId/*, navigation*/ }) => {
       );
 }
 
-export default ShowFood;
+// export default ShowFood;
 
 const styles = StyleSheet.create({
     container: {

@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
-import AddFood from '../components/AddFood';
+import { ScrollView } from 'react-native';
+import AddFoodMain from '../components/AddFood/AddFoodMain';
+import PreviousScreenButton from '../components/PreviousScreenButton';
 
 function AddFoodScreen (){
     return (
-        <View>
-            <AddFood />
-        </View>
+        <ScrollView>
+            <PreviousScreenButton/>
+            <AddFoodMain />
+        </ScrollView>
     );
 };
 

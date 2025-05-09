@@ -24,4 +24,4 @@ function CounterComponent() {
     );
 }
 
-export default CounterComponent;
+// export default CounterComponent;

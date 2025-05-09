@@ -3,11 +3,15 @@ import House from '../models/House';
 import Furniture from '../models/Furniture';
 import Food from '../models/Food';
 
-const buildUserFromData = (dataUser) => {
+const buildUserDataFromDb = (dataUser) => {
     const user = new User(dataUser.user_id, dataUser.user_name, dataUser.user_mail, dataUser.user_is_premium);
     if (dataUser.user_house_table) {
         dataUser.user_house_table.forEach(houseData => {
-            const house = new House(houseData.user_house_id, houseData.user_house_name, houseData.user_house_owner);
+            const house = new House(
+                houseData.user_house_id, 
+                houseData.user_house_name, 
+                houseData.user_house_owner
+            );
             if (houseData.all_user_furniture_table) {
                 houseData.all_user_furniture_table.forEach(furnitureData => {
                     const furniture = new Furniture(
@@ -23,12 +27,9 @@ const buildUserFromData = (dataUser) => {
                                 foodData.food_name,
                                 foodData.food_brand,
                                 foodData.food_registered_date,
-                                //foodData.food_category,
                                 foodData.food_expiration_date,
                                 foodData.food_bar_code,
                                 foodData.food_qty,
-                                //foodData.food_opened_date,
-                                //foodData.food_is_opened,
                                 foodData.food_furniture_stored_id
                             );
                             furniture.addFood(food);
@@ -43,4 +44,4 @@ const buildUserFromData = (dataUser) => {
     return user;
 };
 
-export default buildUserFromData;
+export default buildUserDataFromDb;

@@ -4,10 +4,7 @@ import React, { StrictMode } from "react";
 
 import ManageFoodScreen from './screens/ManageFoodScreen';
 import HomeScreen from './screens/HomeScreen';
-import AllHouseScreen from './screens/AllHouseScreen';
-import AllFurnitureScreen from './screens/AllFurnitureScreen';
-import AllFoodScreen from './screens/AllFoodScreen';
-import AllElementScreen from './screens/AllElementScreen';
+import AddFoodScreen from './screens/AddFoodScreen';
 import ScanBarCodeCamera from './ScanBarCodeCamera';
 import { View } from 'react-native';
 
@@ -21,9 +18,10 @@ export default function App() {
 <Stack.Screen name="Home" component={ManageFoodScreen} />
 <Stack.Screen name="ScanCamera" component={ScanBarCodeCamera} />
 </Stack.Navigator>
+import HomeScreen from './screens/HomeScreen';
 */
       <StrictMode>
-              <AllFoodScreen/>
+              <AddFoodScreen/>
       </StrictMode>
   );
 }

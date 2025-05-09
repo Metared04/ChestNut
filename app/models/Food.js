@@ -140,11 +140,12 @@ class Food
                 return 'shopping-basket';
         }
 
-        getNameAndKeywords() {
-		const barCode = this.foodBarCode;
-		console.log(" => ",barCode);
-
-		return fetch(`https://world.openfoodfacts.org/api/v3/product/${barCode}.json`)
+        async getOpenFoodFactsData(){
+                if (this.foodBarCode === ""){
+                        console.log("Fichier food.js : Vous devez entrer un code complet");
+                        return null;
+                } else {
+                        return fetch(`https://world.openfoodfacts.org/api/v3/product/${this.foodBarCode}.json`)
 			.then(response => {
 				console.log("Réponse reçue :", response.status);
 				if (!response.ok) {
@@ -159,128 +160,64 @@ class Food
 					return null;
 				}
 
-				const productRealName = data.product.product_name;
+				const trueProductName = data.product.product_name || "";
 				const allProductCategories = data.product.categories.split(",");
-
-				return { productRealName, allProductCategories };
+                                //return trueProductName;
+				return { trueProductName, allProductCategories };
 			})
 			.catch(error => {
 				console.error("Erreur :", error);
 				return null;
 			});
-	}
-	
+                }
+        }
+        
+        /*
+                const data = await food.extractKeywords();
+
+        */
+
+
 	async estimateExpirationDate() {
 		const productInfos = await this.getNameAndKeywords();
+                if (productInfos === null){
+                        const res = "Impossible d'avoir une date recommande.";
+                        return {
+                                res
+                        }
+                } else {
+                        /*
+                        const categories = productInfos.allProductCategories;
+		        const mainKeyword = getMainCategoryFromKeywords(categories);
+		        //const duration =  (mainKeyword);
+                        const duration = shelfLifeMap[mainKeyword] || shelfLifeMap["autre"];
+		        const estimatedExpiration = new Date();
+		        estimatedExpiration.setDate(estimatedExpiration.getDate() + duration);
 
-		const categories = productInfos.allProductCategories;
-		const mainKeyword = getMainCategoryFromKeywords(categories);
-		const duration =  (mainKeyword);
-
-		const estimatedExpiration = new Date();
-		estimatedExpiration.setDate(estimatedExpiration.getDate() + duration);
-
-		this.setExpirationDate(estimatedExpiration);
-
-		return {
-			mainKeyword,
-			duration,
-			estimatedExpiration
-			};
+		        this.setExpirationDate(estimatedExpiration);
+                        */
+		        return productInfos;
+                }
+		
 	}
 }
 
-const categoryMap = {
-	"abats frais": "Viandes",
-	"viande hachée du boucher": "Viandes",
-	"saucisses": "Viandes",
-	"viande cuite emballée": "Viandes",
-	"fruits de mer": "Poissons et Fruits de mer",
-	"poissons crus": "Poissons et Fruits de mer",
-	"charcuterie": "Charcuteries",
-	"bacon": "Charcuteries",
-	"charcuterie tranchée": "Charcuteries",
-	"charcuterie préemballée": "Charcuteries",
-	"crème fraîche au lait cru": "Crèmes",
-	"crème fraîche pasteurisée": "Crèmes",
-	"fromage râpé": "Fromages",
-	"fromage frais": "Fromages",
-	"fromage à pâte dure": "Fromages",
-	"lait UHT": "Laits et Produits Laitiers Divers",
-	"lait ultra-pasteurisé": "Laits et Produits Laitiers Divers",
-	"beurre": "Laits et Produits Laitiers Divers",
-	"oeufs frais": "Laits et Produits Laitiers Divers",
-	"yaourt": "Produits Transformés à Base de Lait",
-	"potage": "Soupe et Potage",
-	"soupe": "Soupe et Potage",
-	"sauce pour pâtes": "Sauces",
-	"jus de fruit": "Jus de Fruits",
-	"jus de fruit entamé": "Jus de Fruits",
-	"raisins": "Fruits",
-	"prunes": "Fruits",
-	"pêche": "Fruits",
-	"abricots": "Fruits",
-	"pommes": "Fruits",
-	"poivrons": "Fruits",
-	"radis": "Fruits",
-	"navet": "Fruits",
-	"tomates": "Fruits",
-	"courgettes": "Fruits",
-	"concombre": "Fruits",
-	"poireau": "Fruits",
-	"carottes": "Légumes",
-	"bettraves": "Légumes",
-	"mayonnaise": "Condiments et Sauces",
-	"ketchup": "Condiments et Sauces",
-	"pommes de terre": "Épicerie",
 
-};
 
-const shelfLifeMap = {
-  "abats frais": 1,
-  "viande hachée du boucher": 1,
-  "saucisses": 1,
-  "fruits de mer": 1,
-  "poissons crus": 1,
-  "crême fraîche au lait cru": 2,
-  "oeufs durs": 2,
-  "viande cuite emballée": 2,
-  "fruits rouge": 2,
-  "yaourt": 3,
-  "lait UHT": 3,
-  "sauce pour pâtes": 3,
-  "charcuterie": 3,
-  "charcuteries": 3,
-  "charcuterie tranchée": 3,
-  "charcuterie préemballée": 3,
-  "potage": 3,
-  "soupe": 3,
-  "crême fraîche pasteurisée": 4,
-  "jus de fruit entamé": 5,
-  "jus de fruit": 5,
-  "raisins": 5,
-  "prunes": 5,
-  "lait ultra-pasteurisé": 7,
-  "fromage rapé": 7,
-  "fromage frais": 7,
-  "pêche": 7,
-  "abricots": 7,
-  "poivrons": 7,
-  "radis": 7,
-  "navet": 7,
-  "tomates": 7,
-  "courgettes": 7,
-  "concombre": 7,
-  "poireau": 7,
-  "beurre": 14,
-  "frommage à pâte dure": 21,
-  "oeufs frais": 21,
-  "bettraves": 21,
-  "mayonnaise": 60,
-  "pommes": 60,
-  "carottes": 90,
-  "ketchup": 364,
-};
+function getMainCategoryFromKeywords(keywords) {
+	//console.log(" ->  ", typeof(keywords));
+        const lowerKeywords = keywords.map(k => k.trim().toLowerCase());
+        // console.log(" ->  ", typeof(lowerKeywords));
+        for (let keyword of lowerKeywords) {
+                for (let key in categoryMap) {
+                        if (keyword.includes(key)) {
+                                return categoryMap[key].toLowerCase();
+                        }
+                }
+        }
+
+        return "autre";
+}
 
 export default Food
 

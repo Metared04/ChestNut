@@ -48,4 +48,4 @@ const HouseMenu = ({ visible, onClose, groupedHouses }) => {
   );
 };
 
-export default HouseMenu;
+// export default HouseMenu;

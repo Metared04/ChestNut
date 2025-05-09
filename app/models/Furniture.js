@@ -2,55 +2,55 @@ import Food from "./Food";
 
 class Furniture {
 	constructor(
-		inventoryId,
-		inventoryName = "Meuble inconnue",
-		inventoryNombreOfElement = 0,
-		inventoryMaxLength = 25,
-		inventoryFoodList = [],
-		inventoryType = new Set(["Frigo", "Congelateur"])
+		furnitureId,
+		furnitureName = "Meuble inconnue",
+		furnitureNombreOfElement = 0,
+		furnitureMaxLength = 25,
+		furnitureFoodList = [],
+		furnitureType = new Set(["Frigo", "Congelateur"])
 	) {
-		if (!inventoryName || inventoryName.trim() === "") {
+		if (!furnitureName || furnitureName.trim() === "") {
 			throw new Error("Le nom de l'inventaire ne peut pas être vide.");
 		}
 
-		if (!Number.isInteger(inventoryMaxLength) || inventoryMaxLength <= 0) {
+		if (!Number.isInteger(furnitureMaxLength) || furnitureMaxLength <= 0) {
 			throw new Error("La capacité maximale doit être un entier positif.");
 		}
 
-		this.inventoryId = inventoryId;
-		this.inventoryName = inventoryName;
-		this.inventoryNombreOfElement = inventoryNombreOfElement;
-		this.inventoryMaxLength = inventoryMaxLength;
-		this.inventoryFoodList = inventoryFoodList;
-		this.inventoryType = inventoryType;
+		this.furnitureId = furnitureId;
+		this.furnitureName = furnitureName;
+		this.furnitureNombreOfElement = furnitureNombreOfElement;
+		this.furnitureMaxLength = furnitureMaxLength;
+		this.furnitureFoodList = furnitureFoodList;
+		this.furnitureType = furnitureType;
 	}
 
-	getInventoryId() {
-		return this.inventoryId;
+	getFurnitureId() {
+		return this.furnitureId;
 	}
 
-	getInventoryName() {
-		return this.inventoryName;
+	getFurnitureName() {
+		return this.furnitureName;
 	}
 
-	getInventoryNombreOfElement() {
-		return this.inventoryNombreOfElement;
+	getFurnitureNombreOfElement() {
+		return this.furnitureNombreOfElement;
 	}
 
-	getInventoryMaxLength() {
-		return this.inventoryMaxLength;
+	getFurnitureMaxLength() {
+		return this.furnitureMaxLength;
 	}
 
-	getInventoryFoodList() {
-		return this.inventoryFoodList;
+	getFurnitureFoodList() {
+		return this.furnitureFoodList;
 	}
 
-	getInventoryType() {
-		return this.inventoryType;
+	getFurnitureType() {
+		return this.furnitureType;
 	}
 
 	getAllFoodsWithFurnitureInfo() {
-		return this.inventoryFoodList.map(food => ({
+		return this.furnitureFoodList.map(food => ({
 			...food,
 			furnitureId: this.furnitureId,
 			furnitureName: this.furnitureName,
@@ -65,40 +65,40 @@ class Furniture {
 		if (this.isInventoryFull()) {
 			return "L'inventaire est plein !";
 		}
-		this.inventoryFoodList.push(food);
-		this.inventoryNombreOfElement++;
+		this.furnitureFoodList.push(food);
+		this.furnitureNombreOfElement++;
 		return `${food.foodName} ajouté à l'inventaire.`;
 	}
 
 	isInventoryEmpty() {
-		return this.inventoryNombreOfElement === 0;
+		return this.furnitureNombreOfElement === 0;
 	}
 
 	isInventoryFull() {
-		return this.inventoryNombreOfElement >= this.inventoryMaxLength;
+		return this.furnitureNombreOfElement >= this.furnitureMaxLength;
 	}
 
 	removeFoodById(foodId) {
-		const index = this.inventoryFoodList.findIndex(food => food.getFoodId() === foodId);
+		const index = this.furnitureFoodList.findIndex(food => food.getFoodId() === foodId);
 		if (index !== -1) {
-			this.inventoryFoodList.splice(index, 1);
-			this.inventoryNombreOfElement--;
+			this.furnitureFoodList.splice(index, 1);
+			this.furnitureNombreOfElement--;
 			return `Aliment ${foodId} supprimé.`;
 		}
 		return "Aucun aliment avec cet ID trouvé.";
 	}
 
 	getFoodById(id) {
-		return this.inventoryFoodList.find(food => food.getFoodId() === id) || null;
+		return this.furnitureFoodList.find(food => food.getFoodId() === id) || null;
 	}
 
 	clearInventory() {
-		this.inventoryFoodList = [];
-		this.inventoryNombreOfElement = 0;
+		this.furnitureFoodList = [];
+		this.furnitureNombreOfElement = 0;
 	}
 
 	getExpiredFoods(currentDate = new Date()) {
-		return this.inventoryFoodList.filter(food => {
+		return this.furnitureFoodList.filter(food => {
 			const expDate = new Date(food.foodExpirationDate);
 			return expDate < currentDate;
 		});

@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Alert, SafeAreaView, View, TouchableOpacity, Text, TextInput } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
+function formattedDate(){
+	  const today = (new Date(Date.now() + 86400000)).toISOString().split('T')[0];
+	  const dayOfToday = today.split('-')[2];
+	  const monthOfToday = today.split('-')[1];
+	  const yearOfToday = today.split('-')[0];
+	  const newToday = dayOfToday +"/"+ monthOfToday +"/"+ yearOfToday;
+	  return newToday;
+}
+
 function DateComponent({ onChange, reset }) {
     const [form, setForm] = useState({});
     const [input, setInput] = useState('');
@@ -50,56 +59,55 @@ function DateComponent({ onChange, reset }) {
         }
     };
 
-  return (
-    <SafeAreaView style={styles.container}>
-        <View>
+    return (
+        <SafeAreaView style={styles.container}>
             <View>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    autoFocus={true}
-                    caretHidden={true}
-                    keyboardType="number-pad"
-                    maxLength={8}
-                    onChangeText={handleInputChange}
-                    returnKeyType="done"
-                    style={styles.inputControl}
-                    value={input} />
+                <View>
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            autoFocus={true}
+                            caretHidden={true}
+                            keyboardType="number-pad"
+                            maxLength={8}
+                            onChangeText={handleInputChange}
+                            returnKeyType="done"
+                            style={styles.inputControl}
+                            value={input} />
 
-                    <View style={styles.inputOverflow}>
-                        {'DD/MM/YYYY'.split('').map((placeholder, index, arr) => {
-                        const countDelimiters = arr
-                        .slice(0, index)
-                        .filter(char => char === '/').length;
-                        const indexWithoutDelimeter = index - countDelimiters;
-                        const current = input[indexWithoutDelimeter];
+                            <View style={styles.inputOverflow}>
+                                {formattedDate().split('').map((placeholder, index, arr) => {
+                                    const countDelimiters = arr
+                                        .slice(0, index)
+                                        .filter(char => char === '/').length;
+                                    const indexWithoutDelimeter = index - countDelimiters;
+                                    const current = input[indexWithoutDelimeter];
 
-                        return (
-                            <Text key={index} style={styles.inputChar}>
-                                {placeholder === '/' || !current ? (
-                                <Text style={styles.inputCharEmpty}>{placeholder}</Text>
-                                ) : (
-                                current
-                                )}
-                            </Text>
-                            );
-                        })}
-                        <View style={styles.inputIcon}>
-  <FeatherIcon name="calendar" size={20} color="#8027d6" />
-</View>
-                     </View>
+                                    return (
+                                        <Text key={index} style={styles.inputChar}>
+                                            {placeholder === '/' || !current ? (
+                                            <Text style={styles.inputCharEmpty}>{placeholder}</Text>
+                                            ) : (
+                                            current
+                                            )}
+                                        </Text>
+                                    );
+                                  })}
+                              <View style={styles.inputIcon}>
+                                  <FeatherIcon name="calendar" size={20} color="#8027d6" />
+                              </View>
+                          </View>
+                    </View>
                 </View>
             </View>
-        </View>
-    </SafeAreaView>
+        </SafeAreaView>
     );
 }
 
 export default DateComponent;
 
 const styles = StyleSheet.create({
-    
   container: { 
     marginBottom: 20,
   },

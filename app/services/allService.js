@@ -1,15 +1,54 @@
 import supabase from './supabase';
 
 const fetchFoods = async () => {
-    return await supabase.from("all_food_table").select("*");
+    const { data, error } = await supabase.from("food_table").select("*");
+    if (error) {
+        console.error('Erreur lors de la récupération des produits :', error);
+        return null;
+    }
+    
+    return data;
 };
 
+const insertFood = async (food, idFurniture) => {
+    const foodData = {
+        food_id: food.foodId,
+        food_name: food.foodName,
+        food_brand: food.foodBrand,
+        food_registered_date: new Date(),
+        food_expiration_date: food.foodExpirationDate,
+        food_bar_code: food.foodBarCode,
+        food_qty: food.foodQty,
+        food_furniture_stored_id: idFurniture,
+    }
+    return await supabase.from("food_table").insert([foodData]).single();
+};
+
+const createFurnitureForUser = async(furniture, idUser, idHouse) => {
+    const furnitureData = {
+        user_furniture_id: furniture.furnitureId,
+        user_furniture_name: furniture.furnitureName,
+        user_furniture_type_id: furniture.furnitureType,
+        user_id: idUser,
+        user_house_id: idHouse,
+    } 
+}
+
+const createHouseForUser = async(house, idUser) => {
+    const houseData = {
+        user_house_id: house.houseId,
+        user_house_name: houseName = houseName,
+        user_house_owner: idUser,
+    }
+    return await supabase.from("user_house_table").insert([houseData]).single();
+}
+
 const updatedFoodState = async (foodId, isOpened) => {
-    return await supabase.from("all_food_table").update({ food_is_opened: !isOpened }).eq("food_id", foodId);
+    return await supabase.from("food_table").update({ food_is_opened: !isOpened }).eq("food_id", foodId);
 };
 
 const deleteFood = async (food_id) => {
-    return await supabase.from("all_food_table").delete().eq("food_id", food_id);
+    return await supabase.from("food_table").delete().eq("food_id", food_id);
 };
 
 const fetchUserHouses = async (userId) => {
@@ -27,8 +66,6 @@ const fetchUserHouses = async (userId) => {
 };
 
 const getFurnitureByHouseId = async (houseId) => {
-    //const user_data = await allService.fetchUserHouses(userId);
-    //id_user = user_data[0].user_house_id;
     const { data, error } = await supabase
         .from('all_user_furniture_table')
         .select('*')
@@ -117,7 +154,7 @@ const fetchUserHousesWithFurnitureAndFoods = async (userId) => {
     .eq('user_house_owner_id', userId);
 
     if (error) {
-        console.error("Erreur fetchUserHousesWithFurnitureAndFoods :", error);
+        console.error("Erreur dans la requete fetchUserHousesWithFurnitureAndFoods :", error);
         return [];
     }
 
@@ -161,7 +198,41 @@ const fetchAllUsersData = async (userId) => {
     }
   
     return data?.[0]; // On suppose que user_id est unique, donc on prend le premier élément
-  };
+};
+
+const fetchAllProductCategories = async (keyword) => {
+    const { data, error } = await supabase
+    .from('categories_product_table')
+    .select('*')
+    .ilike('category_name', `%${keyword}%`);
+
+    if (error) {
+        console.error('Erreur lors de la recherche de la bonne categorie : ', error);
+        return null;
+    }
+    if(data.length === 0){
+        return [];
+    } else {
+        return data?.[0];
+    }
+}
+
+const filtrationCategories = async (id) => {
+    const { data, error } = await supabase
+    .from('product_duration_table')
+    .select(`
+        product_name,
+        product_duration,
+        product_category_id
+        `)
+    .eq('product_category_id', id);
+    //.ilike('product_name', `%${keyword}%`);
+    
+    if(error){
+        console.log("Erreur lors de la recuperation de la duree : ", error);
+    }
+    return data;
+}
 
 export default {
     fetchFoods,
@@ -174,4 +245,7 @@ export default {
     fetchAllUsersData,
     fetchUserHousesWithFurniture,
     fetchUserHousesWithFurnitureAndFoods,
+    insertFood,
+    fetchAllProductCategories,
+    filtrationCategories,
 };

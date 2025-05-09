@@ -36,11 +36,11 @@ class House {
 	}
 
 	getFurnitureById(id) {
-		return this.houseFurnitureList.find(f => f.inventoryId === id);
+		return this.houseFurnitureList.find(f => f.furnitureId === id);
 	}
 
 	getAllFoodsOnThisHouse() {
-		return this.houseFurnitureList.flatMap(f => f.getInventoryFoodList());
+		return this.houseFurnitureList.flatMap(f => f.getFurnitureFoodList());
 	}
 
 	getAllFoodsWithDetails() {

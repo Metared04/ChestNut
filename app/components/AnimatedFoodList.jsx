@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
     }
 });
   
-export default AnimatedFoodList;
+// export default AnimatedFoodList;
