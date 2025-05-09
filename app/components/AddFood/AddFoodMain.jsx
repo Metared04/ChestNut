@@ -4,6 +4,7 @@ import { Text, View, StyleSheet} from "react-native";
 
 import allService from '../../services/allService';
 import buildUserDataFromDb from "../../builders/buildUserDataFromDb";
+//import estimateProductShelfLife from './estimateProductShelfLife';
 
 import supabase from '../../services/supabase';
 
@@ -21,12 +22,11 @@ import FoodQtyInput from './FoodQtyInput';
 import FoodSaveInput from './FoodSaveInput';
 import UseOpenFoodFactsComponent from './UseOpenFoodFactsComponent';
 
-async function parcoursListe(liste) {
+async function getAllPotentialsCategories(allCategories) {
     try {
         var matchedCategory = [];
-        for(let i = 0; i < liste.length; i++) {
-            // ------------->
-            const getCategories = await allService.fetchAllProductCategories(liste[i].toLowerCase().normalize().trim());
+        for(let i = 0; i < allCategories.length; i++) {
+            const getCategories = await allService.fetchAllProductCategories(allCategories[i].toLowerCase().normalize().trim());
              if (getCategories.length !== 0){
                 matchedCategory.push(getCategories)
             };
@@ -34,44 +34,67 @@ async function parcoursListe(liste) {
         return(matchedCategory);
     }
         catch(error){
-            console.error("Erreur chargement  :", error);
+            console.error("Erreur lors de la recupération des catégories sur open food fact :", error);
         }
 }
 
-async function recupProduitsBDD(listeCategorie) {
-    try {
-        console.log("liste categorie : ", listeCategorie);
-        var allMatchedCategories = [];
-        for(let i= 0; i < listeCategorie.length; i++) {
-            const getProducts = await allService.filtrationCategories(listeCategorie[i].category_id);
-            if (getProducts.length !== 0){
-                for(let i= 0; i < getProducts.length; i++){
-                    allMatchedCategories.push(getProducts[i]);
-                }
-            };
+async function getAllMatchedCategories(allPotentialCategories) {
+    if(allPotentialCategories.length === 0){
+        return [];
+    } else {
+        try {
+            console.log("liste categorie : ", allPotentialCategories);
+            var allMatchedCategories = [];
+            for(let i= 0; i < allPotentialCategories.length; i++) {
+                const getProducts = await allService.filtrationCategories(allPotentialCategories[i].category_id);
+                if (getProducts.length !== 0){
+                    for(let i= 0; i < getProducts.length; i++){
+                        allMatchedCategories.push(getProducts[i]);
+                    }
+                };
+            }
+            return(allMatchedCategories);
         }
-        return(allMatchedCategories);
-    }
-    catch(error){
-        console.error("Erreur dans recupProduitsBDD :", error);
+        catch(error){
+            console.error("Erreur dans getAllMatchedCategories :", error);
+        }
     }
 }
 
-function similaritéParMots(a, b) {
-    const motsA = a.toLowerCase().trim().split(/\s+/);
-    const motsB = b.toLowerCase().trim().split(/\s+/);
+function findMostSimilarName(refName, allPotentialNameList) {
+    if(allPotentialNameList.length === 0){
+        return "";
+    } else {
+        let bestName = null;
+        let bestLevenshteinScore = Infinity;
+
+        for (const candidat of allPotentialNameList) {
+            const levenshteinScore = nameSimilarity(refName, candidat.product_name);
+            if (levenshteinScore < bestLevenshteinScore) {
+                bestLevenshteinScore = levenshteinScore;
+                bestName = candidat;
+            }
+        }
+
+        return bestName;
+    }
+}
+
+function nameSimilarity(correctName, nameToCompared) {
+    const nameA = correctName.toLowerCase().trim().split(/\s+/);
+    const nameB = nameToCompared.toLowerCase().trim().split(/\s+/);
 
     let totalScore = 0;
 
-    for (const motB of motsB) {
+    for (const wordB of nameB) {
         let minScore = Infinity;
-        for (const motA of motsA) {
-            const score = levenshtein(motA, motB);
+        for (const wordA of nameA) {
+            const score = levenshtein(wordA, wordB);
             minScore = Math.min(minScore, score);
         }
 
         // BONUS : si le mot est présent tel quel, réduis fortement le score
-        if (motsA.includes(motB)) {
+        if (nameA.includes(wordB)) {
             minScore -= 2; // ou * 0.5, ou fixe à 0
         }
 
@@ -80,32 +103,6 @@ function similaritéParMots(a, b) {
 
     return totalScore;
 }
-
-function trouverNomLePlusSimilaire(reference, liste) {
-    let meilleurNom = null;
-    let meilleurScore = Infinity;
-
-    for (const candidat of liste) {
-        const score = similaritéParMots(reference, candidat.product_name);
-        if (score < meilleurScore) {
-            meilleurScore = score;
-            meilleurNom = candidat;
-        }
-    }
-
-    return meilleurNom;
-}
-
-function nettoyerNomProduit(nom) {
-    return nom
-      .toLowerCase()
-      .normalize("NFD")                 // décompose les lettres accentuées (é → e + ́)
-      .replace(/[\u0300-\u036f]/g, "") // supprime les marques d'accent
-      .replace(/[^\w\s]/gi, '')        // retire les caractères spéciaux restants
-      .replace(/\d+/g, '')             // retire les nombres
-      .trim()
-      .split(/\s+/);                   // découpe en mots
-  }
 
 function levenshtein(a, b) {
     const matrix = Array.from({ length: a.length + 1 }, () => []);
@@ -125,6 +122,32 @@ function levenshtein(a, b) {
     return matrix[a.length][b.length];
 }
 
+async function getProductDuration(unNom, uneListe){
+    if(unNom.length === 0){
+        return 1;
+    } else {
+        const potentialCategories = await getAllPotentialsCategories(uneListe);
+        const potentialProducts = await getAllMatchedCategories(potentialCategories);
+        const testName = findMostSimilarName(unNom, potentialProducts);
+
+        return testName.product_duration;
+    }
+}
+
+/*
+function nettoyerNomProduit(nom) {
+    return nom
+      .toLowerCase()
+      .normalize("NFD")                 // décompose les lettres accentuées (é → e + ́)
+      .replace(/[\u0300-\u036f]/g, "") // supprime les marques d'accent
+      .replace(/[^\w\s]/gi, '')        // retire les caractères spéciaux restants
+      .replace(/\d+/g, '')             // retire les nombres
+      .trim()
+      .split(/\s+/);                   // découpe en mots
+  }
+*/
+
+/*
 function trouverCorrespondances(vraiNom, tabProduits) {
     if (tabProduits.length > 0) {
         var meilleurNom = tabProduits[0].product_name;
@@ -140,9 +163,21 @@ function trouverCorrespondances(vraiNom, tabProduits) {
             }
         }
         return(meilleurNom);
-    } 
+    } else {
+        return "";
+    }
 }
+*/
 
+/*
+async function getProductDuration(productName, allProductCategories){
+    const potentialCategories = await getAllPotentialsCategories(allProductCategories);
+    const potentialProducts = await getAllMatchedCategories(potentialCategories);
+    //const nomCorrespondant = trouverCorrespondances(productName, potentialProducts);
+    const testNom = findMostSimilarName(productName, potentialProducts);
+    return getDuration(testNom);
+}
+*/
 /*function trouverCorrespondances(nomSaisi, tabBDD) {
     const motsSaisis = nomSaisi;
     const motBDD = tabBDD;
@@ -236,12 +271,12 @@ const AddFoodMain = ({ userId = 1 }) => {
     };
 
     const handleFurnitureSelect = (furniture, house) => {
-        setIdFurniture(furniture.inventoryId);
+        setIdFurniture(furniture.furnitureId);
         setIdHouse(house.houseId);
     };
 
     const saveFood = async () => {
-        console.log("oui ?")
+        //console.log("oui ?")
         const foodData = {
             food_id: food.foodId,
             food_name: food.foodName,
@@ -266,37 +301,12 @@ const AddFoodMain = ({ userId = 1 }) => {
             console.log("On en a un, code barre existant ! ");
             const data = await food.getOpenFoodFactsData();
             if(data === null){
-                console.log("??? Probleme juste la !");
+                console.error("Erreur lors de la recuperation des donnees sur open food facts.");
             } else {
                 setProductNameData(data.trueProductName);
-            const potentialCategories = await parcoursListe(data.allProductCategories);
-            console.log(potentialCategories);
-            const potentialProducts = await recupProduitsBDD(potentialCategories);
-            console.log("=> ", potentialProducts);
-            const nomCorrespondant = trouverCorrespondances(data.trueProductName, potentialProducts);
-            console.log(nomCorrespondant);
-            const testNom = trouverNomLePlusSimilaire(data.trueProductName, potentialProducts);
-            console.log("code chatgpt : ", testNom.product_duration);
-            setRecommandedDuration(testNom.product_duration);
-            //console.log("duree = ", testNom.product_duration);
-                /*const nomNettoyer = nettoyerNomProduit(data.productRealName);
-                console.log("resultat ",nomNettoyer);
-                console.log(data.allProductCategories);
-                setProductCategoriesData(data.allProductCategories);
-                const kategories = await getItsCategory(data.allProductCategories);
-                console.log(kategories);
-                trouverCorrespondances(nomNettoyer, kategories);*/
-
-
-                //ici comparer nom nettoyer et kategories
-                //console.log(data.allProductCategories);
-                //console.log(typeof(productCategoriesData));
-                //console.log("===> ",(productCategoriesData));
-                //setRecommandedDuration(getItsCategory(data.allProductCategories));
-                //const resultat = getItsCategory(data.allProductCategories);
-                // Faire une comparaison de resultat avec data.productRealName
+                const duration = await getProductDuration(data.trueProductName, data.allProductCategories);
+                setRecommandedDuration(duration);
             }
-            //const data = await food.extractKeywords();
         } else {
             // Mettre un pop up pour dire que le code barre est pas correct
             console.log("c'est pas bon, code barre incomplet");
@@ -330,7 +340,7 @@ const AddFoodMain = ({ userId = 1 }) => {
 
             <Text style={styles.label}>Date de peremption</Text>
 
-            <Text> ici pour la date recommander : {recommandedDuration ? recommandedDuration : "jsaipo"} jour(s), ce qui donne : {getRecommandedDate(recommandedDuration) ? getRecommandedDate(recommandedDuration) : "po trouve"}</Text>
+            <Text> D'apres notre données : {recommandedDuration ? recommandedDuration : "jsaipo"} jour(s), de conservation maximum sont conseillés : {getRecommandedDate(recommandedDuration) ? getRecommandedDate(recommandedDuration) : "po trouve"}</Text>
             
             <DateComponent
                 onChange={(date) => handleChange("foodExpirationDate", date)}
@@ -396,13 +406,13 @@ async function getItsCategory(keywordsList){
     console.log("b => ", b);
     return [];
 }
-
+/*
 async function getDuration(id){
     const res = await allService.filtrationCategories(id);
     console.log("un autre resultat : ", res);
     return res;
 }
-
+*/
 function getDateInMiliseconde(numberOfDays){
     if(numberOfDays === 0){
         return 86400000;

@@ -5,20 +5,20 @@ const FurnitureListComponent = ({house, selected, setSelected, onFurnitureSelect
         <View style={styles.radioGroup}>
             {house.getHouseFurnitureList().map((furniture) => (
                 <View
-                    key={furniture.inventoryId}
-                    selected={furniture.inventoryId === selected} 
-                    onPress={() => setSelected(furniture.inventoryId)}
+                    key={furniture.furnitureId}
+                    selected={furniture.furnitureId === selected} 
+                    onPress={() => setSelected(furniture.furnitureId)}
                 >
                     <TouchableOpacity 
                         onPress={() => {
                             onFurnitureSelect(furniture, house);
-                            setSelected(furniture.inventoryId);
+                            setSelected(furniture.furnitureId);
                         }} 
                         style={styles.radioButton}>
-                            <View style={[styles.outerCircle, furniture.inventoryId && styles.selected]}>
-                                {selected === furniture.inventoryId && <View style={styles.innerCircle} />}
+                            <View style={[styles.outerCircle, furniture.furnitureId && styles.selected]}>
+                                {selected === furniture.furnitureId && <View style={styles.innerCircle} />}
                             </View>
-                            <Text>{furniture.inventoryName}</Text>
+                            <Text>{furniture.furnitureName}</Text>
                     </TouchableOpacity>
                 </View>
             ))}

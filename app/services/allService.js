@@ -24,6 +24,25 @@ const insertFood = async (food, idFurniture) => {
     return await supabase.from("food_table").insert([foodData]).single();
 };
 
+const createFurnitureForUser = async(furniture, idUser, idHouse) => {
+    const furnitureData = {
+        user_furniture_id: furniture.furnitureId,
+        user_furniture_name: furniture.furnitureName,
+        user_furniture_type_id: furniture.furnitureType,
+        user_id: idUser,
+        user_house_id: idHouse,
+    } 
+}
+
+const createHouseForUser = async(house, idUser) => {
+    const houseData = {
+        user_house_id: house.houseId,
+        user_house_name: houseName = houseName,
+        user_house_owner: idUser,
+    }
+    return await supabase.from("user_house_table").insert([houseData]).single();
+}
+
 const updatedFoodState = async (foodId, isOpened) => {
     return await supabase.from("food_table").update({ food_is_opened: !isOpened }).eq("food_id", foodId);
 };
