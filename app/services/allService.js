@@ -184,7 +184,7 @@ const fetchAllUsersData = async (userId) => {
 const fetchAllProductCategories = async (keyword) => {
     const { data, error } = await supabase
     .from('categories_product_table')
-    .select('category_id')
+    .select('*')
     .ilike('category_name', `%${keyword}%`);
 
     if (error) {

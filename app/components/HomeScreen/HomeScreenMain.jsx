@@ -17,7 +17,7 @@ import HomeScreenMainContent from "./HomeScreenMainContent";
 import HomeScreenHeaderMain from "./HomeScreenHeader/HomeScreenHeaderMain";
 
 import allService from "../../services/allService";
-import buildUserFromData from "../../builders/buildUserFromData";
+import buildUserDataFromDb from "../../builders/buildUserDataFromDb";
 
 const { height } = Dimensions.get('window');
 
@@ -43,7 +43,7 @@ const HomeScreenMain = ({ navigation, userId }) => {
             console.log("donnée brut 2 :", rawData.user_name);
             setUserNick(rawData.user_name);
 
-            const user = buildUserFromData(rawData);
+            const user = buildUserDataFromDb(rawData);
             const allFoods = user.getAllFoods();
             const allFurnitures = user.getAllFurnitures();
             const allHouses = user.getHousesList();
